@@ -5,11 +5,10 @@ public class PlayerAttack : MonoBehaviour
 {
     [Header("Attack Settings")]
     [SerializeField] private int attackDamage = 1;
-    [SerializeField] private float attackRange = 1f;
     [SerializeField] private LayerMask enemyLayer;
 
-    [Header("Debug Settings")]
-    [SerializeField] private bool showAttackRangeGizmo = true;
+    [Header("References")]
+    [SerializeField] private GameObject attackHitbox; // Reference to the attack hitbox object
 
     public void OnAttack(InputAction.CallbackContext context)
     {
@@ -21,8 +20,19 @@ public class PlayerAttack : MonoBehaviour
 
     private void PerformAttack()
     {
-        // Detect enemies within the attack range
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange, enemyLayer);
+        if (attackHitbox == null)
+        {
+            Debug.LogWarning("AttackHitbox is not assigned!");
+            return;
+        }
+
+        // Detect enemies within the attack hitbox
+        Collider2D[] hits = Physics2D.OverlapBoxAll(
+            attackHitbox.transform.position,
+            attackHitbox.GetComponent<BoxCollider2D>().size,
+            0,
+            enemyLayer
+        );
 
         foreach (Collider2D enemy in hits)
         {
@@ -41,16 +51,6 @@ public class PlayerAttack : MonoBehaviour
                 Vector2 knockbackDirection = (enemy.transform.position - transform.position).normalized;
                 enemyHealth.ApplyKnockback(knockbackDirection);
             }
-        }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        // Visualize the attack range in the editor
-        if (showAttackRangeGizmo)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, attackRange);
         }
     }
 }
