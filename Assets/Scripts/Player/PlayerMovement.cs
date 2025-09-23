@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private float dashTimeRemaining;
     private Vector2 dashDirection;
     private Vector2 moveInput;
+    private bool isFacingRight = true;
 
     private Rigidbody2D rb;
 
@@ -35,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         HandleDash();
+        Flip();
     }
 
     private void FixedUpdate()
@@ -72,6 +74,21 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void Flip()
+    {
+        if (moveInput.x == 0)
+            return;
+
+        bool shouldFaceRight = moveInput.x > 0;
+        if (isFacingRight != shouldFaceRight)
+        {
+            isFacingRight = shouldFaceRight;
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1f;
+            transform.localScale = localScale;
+        }
+    }
+
     private void ResetJumpCount()
     {
         jumpsLeft = maxJumps;
@@ -93,8 +110,13 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         dashTimeRemaining = dashDuration;
 
-        // Set dash direction based on move input
-        dashDirection = moveInput.x != 0 ? new Vector2(moveInput.x, 0).normalized : Vector2.right;
+        // Set dash direction based on move input, or facing direction if there's no input.
+        float horizontalDirection = moveInput.x;
+        if (Mathf.Approximately(horizontalDirection, 0f))
+        {
+            horizontalDirection = isFacingRight ? 1f : -1f;
+        }
+        dashDirection = new Vector2(horizontalDirection, 0).normalized;
 
         // Lock the Rigidbody's y-axis to prevent any vertical movement
         rb.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
