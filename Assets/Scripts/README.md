@@ -8,6 +8,19 @@ Bu rehber, Hollow Knight benzeri karakter kontrolcüsü sistemini Unity projeniz
 - Unity Input System paketi (1.14.2+)
 - 2D Physics sistemi
 
+## Hızlı Test
+
+Sistemin çalıştığını doğrulamak için `SystemTester` script'ini kullanabilirsiniz:
+
+1. Boş bir GameObject oluşturun
+2. `SystemTester` komponentini ekleyin  
+3. Play'e basın - sistem otomatik olarak test oyuncusu, düşman ve zemin oluşturacak
+4. Test tuşları:
+   - **T**: Oyuncuya 25 hasar ver (sağlık sistemini test et)
+   - **R**: Test objelerini yeniden oluştur
+
+**Not**: PlayerInput komponentinde InputSystem_Actions dosyasını manuel olarak atamalısınız.
+
 ## Kurulum Adımları
 
 ### 1. Input System Kurulumu
