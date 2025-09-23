@@ -1,0 +1,4 @@
+Sharp studios olarak büyük oyun yapacaz genel düşünün asla basit geçici çözüm yapmayın amınıza koyarım sistem bitmeden yarım kalmış sorunları olan bug test yapılmamış
+şeyleride pushlamayın tekrardan amınıza koyarım.
+
+Daha organize olmamız gerekiyo diye bol bol klasör lazım o yüzden daha çok açabilirsiniz yaptığınız şey hiç bir kategoriye uymuyosa. 
