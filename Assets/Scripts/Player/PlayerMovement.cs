@@ -1,7 +1,3 @@
-// Author: Copilot
-// Version: 1.2
-// Purpose: Handles player movement, including walking, jumping, and dashing.
-
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,14 +11,16 @@ public class PlayerMovement : MonoBehaviour
     public int maxJumps = 2;
 
     [Header("Dash Settings")]
-    public float dashForce = 15f;
+    public float dashDistance = 5f;
     public float dashDuration = 0.2f;
 
     private int jumpsLeft;
     private bool isDashing;
-    private float dashTime;
-    private Rigidbody2D rb;
+    private float dashTimeRemaining;
+    private Vector2 dashDirection;
     private Vector2 moveInput;
+
+    private Rigidbody2D rb;
 
     private void Awake()
     {
@@ -36,12 +34,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        HandleDashTimer();
+        HandleDash();
     }
 
     private void FixedUpdate()
     {
-        ApplyMovement();
+        if (!isDashing)
+        {
+            ApplyMovement();
+        }
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -54,6 +55,12 @@ public class PlayerMovement : MonoBehaviour
         if (context.performed && jumpsLeft > 0)
         {
             Jump();
+        }
+
+        if (context.canceled && rb.linearVelocity.y > 0)
+        {
+            // Stop upward velocity instantly when jump button is released
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
         }
     }
 
@@ -70,24 +77,9 @@ public class PlayerMovement : MonoBehaviour
         jumpsLeft = maxJumps;
     }
 
-    private void HandleDashTimer()
-    {
-        if (isDashing)
-        {
-            dashTime -= Time.deltaTime;
-            if (dashTime <= 0)
-            {
-                EndDash();
-            }
-        }
-    }
-
     private void ApplyMovement()
     {
-        if (!isDashing)
-        {
-            rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
-        }
+        rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
     }
 
     private void Jump()
@@ -99,15 +91,42 @@ public class PlayerMovement : MonoBehaviour
     private void Dash()
     {
         isDashing = true;
-        dashTime = dashDuration;
-        rb.gravityScale = 0f;
-        rb.linearVelocity = new Vector2(moveInput.x * dashForce, 0);
+        dashTimeRemaining = dashDuration;
+
+        // Set dash direction based on move input
+        dashDirection = moveInput.x != 0 ? new Vector2(moveInput.x, 0).normalized : Vector2.right;
+
+        // Lock the Rigidbody's y-axis to prevent any vertical movement
+        rb.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+    }
+
+    private void HandleDash()
+    {
+        if (isDashing)
+        {
+            // Calculate dash distance per frame
+            float dashSpeed = dashDistance / dashDuration;
+            Vector3 dashMovement = dashDirection * dashSpeed * Time.deltaTime;
+
+            // Move the player directly using the Transform component
+            transform.position += dashMovement;
+
+            // Decrease the remaining dash time
+            dashTimeRemaining -= Time.deltaTime;
+
+            if (dashTimeRemaining <= 0)
+            {
+                EndDash();
+            }
+        }
     }
 
     private void EndDash()
     {
         isDashing = false;
-        rb.gravityScale = 3f;
+
+        // Unlock the Rigidbody's y-axis to restore normal vertical movement
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

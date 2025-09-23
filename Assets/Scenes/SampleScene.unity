@@ -456,7 +456,7 @@ GameObject:
   - component: {fileID: 876922410}
   m_Layer: 0
   m_Name: Hitbox1
-  m_TagString: Untagged
+  m_TagString: HitBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -597,7 +597,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 25
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 3
@@ -625,7 +625,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyContactDamage
   damage: 1
-  knockbackForce: 5
   damageColor: {r: 1, g: 0, b: 0, a: 1}
   damageFlashDuration: 0.1
 --- !u!114 &1200350149
@@ -641,7 +640,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   maxHealth: 10
-  knockbackForce: 5
+  knockbackForce: 7
+  flashDuration: 0.1
 --- !u!1 &1343675281
 GameObject:
   m_ObjectHideFlags: 0
@@ -952,8 +952,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 5
-  iFrameDuration: 1
-  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  iFrameDuration: 5
+  damageColor: {r: 1, g: 0, b: 0, a: 0.5803922}
 --- !u!114 &2041628715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -966,11 +966,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c65636e1ce3a9254ab1a45f39346caf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
-  attackDamage: 1
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  attackHitbox: {fileID: 0}
+  attackHitbox: {fileID: 876922408}
+  attackDuration: 0.2
 --- !u!70 &2041628717
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -1142,10 +1139,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 5
-  jumpForce: 12
+  jumpForce: 13
   maxJumps: 2
-  dashForce: 15
-  dashDuration: 1
+  dashDistance: 3.8
+  dashDuration: 0.2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

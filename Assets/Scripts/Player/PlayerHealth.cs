@@ -1,7 +1,3 @@
-// Author: Copilot
-// Version: 2.0
-// Purpose: Manages player's health on the Root object while animations affect the child object.
-
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
@@ -10,7 +6,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public int maxHealth = 5;
 
     [Header("Damage Feedback")]
-    public float iFrameDuration = 1.5f;
+    public float iFrameDuration = 1.5f; // Duration for invulnerability
     public Color damageColor = Color.red;
 
     private int currentHealth;
@@ -36,11 +32,15 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     public void TakeDamage(int amount)
     {
-        if (isInvincible) return;
+        if (isInvincible) return; // Ignore damage while invincible
 
         currentHealth -= amount;
+        Debug.Log($"Player took {amount} damage. Current health: {currentHealth}");
+
+        // Trigger invincibility frames
         StartCoroutine(HandleIFrames());
 
+        // Check if the player is dead
         if (currentHealth <= 0)
         {
             Die();
@@ -49,27 +49,48 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Die()
     {
-        gameObject.SetActive(false);
+        Debug.Log("Player has died!");
+        gameObject.SetActive(false); // Disable the player object
     }
 
     private System.Collections.IEnumerator HandleIFrames()
     {
         isInvincible = true;
 
-        // Change the sprite color to indicate damage
+        // Ignore collisions between the player and enemies immediately
+        Physics2D.IgnoreLayerCollision(3, 7, true); // Player = Layer 3, Enemy = Layer 7
+
+        // Change the sprite color to indicate invincibility
         if (spriteRenderer != null)
         {
             spriteRenderer.color = damageColor;
         }
 
+        // Wait for the duration of invincibility
         yield return new WaitForSeconds(iFrameDuration);
 
-        // Revert to the original color
+        // Re-enable collisions between the player and enemies
+        Physics2D.IgnoreLayerCollision(3, 7, false);
+
+        // Revert the sprite color
         if (spriteRenderer != null)
         {
             spriteRenderer.color = originalColor;
         }
 
         isInvincible = false;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // If invincible, ignore push behavior by canceling physics force
+        if (isInvincible && collision.gameObject.layer == 7) // Enemy Layer
+        {
+            Rigidbody2D enemyRb = collision.gameObject.GetComponent<Rigidbody2D>();
+            if (enemyRb != null)
+            {
+                enemyRb.linearVelocity = Vector2.zero; // Stop enemy movement caused by collision
+            }
+        }
     }
 }

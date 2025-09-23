@@ -9,8 +9,6 @@ public class EnemyContactDamage : MonoBehaviour, IDamageable
     [Header("Damage Settings")]
     public int damage = 1;
 
-    [Header("Knockback Settings")]
-    public float knockbackForce = 5f;
 
     [Header("Damage Feedback")]
     public Color damageColor = Color.red;
@@ -58,13 +56,6 @@ public class EnemyContactDamage : MonoBehaviour, IDamageable
         }
     }
 
-    public void ApplyKnockback(Vector2 forceDirection)
-    {
-        if (rb != null)
-        {
-            rb.AddForce(forceDirection * knockbackForce, ForceMode2D.Impulse);
-        }
-    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -75,9 +66,6 @@ public class EnemyContactDamage : MonoBehaviour, IDamageable
             {
                 damageable.TakeDamage(damage);
 
-                // Apply knockback to the enemy
-                Vector2 knockbackDirection = (transform.position - collision.transform.position).normalized;
-                ApplyKnockback(knockbackDirection);
             }
         }
     }

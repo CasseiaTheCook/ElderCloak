@@ -3,16 +3,17 @@ using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [Header("Attack Settings")]
-    [SerializeField] private int attackDamage = 1;
-    [SerializeField] private LayerMask enemyLayer;
-
     [Header("References")]
     [SerializeField] private GameObject attackHitbox; // Reference to the attack hitbox object
 
+    [Header("Attack Settings")]
+    [SerializeField] private float attackDuration = 0.2f; // Duration for which the hitbox is active
+
+    private bool isAttacking = false;
+
     public void OnAttack(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !isAttacking)
         {
             PerformAttack();
         }
@@ -26,31 +27,17 @@ public class PlayerAttack : MonoBehaviour
             return;
         }
 
-        // Detect enemies within the attack hitbox
-        Collider2D[] hits = Physics2D.OverlapBoxAll(
-            attackHitbox.transform.position,
-            attackHitbox.GetComponent<BoxCollider2D>().size,
-            0,
-            enemyLayer
-        );
+        // Activate the hitbox collider
+        isAttacking = true;
+        attackHitbox.GetComponent<Collider2D>().enabled = true;
 
-        foreach (Collider2D enemy in hits)
-        {
-            // Check if the enemy implements the IDamageable interface
-            IDamageable damageable = enemy.GetComponent<IDamageable>();
-            if (damageable != null)
-            {
-                // Apply damage
-                damageable.TakeDamage(attackDamage);
-            }
+        // Deactivate the hitbox after a short duration
+        Invoke(nameof(ResetAttack), attackDuration);
+    }
 
-            // Apply knockback to the enemy
-            EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-            if (enemyHealth != null)
-            {
-                Vector2 knockbackDirection = (enemy.transform.position - transform.position).normalized;
-                enemyHealth.ApplyKnockback(knockbackDirection);
-            }
-        }
+    private void ResetAttack()
+    {
+        attackHitbox.GetComponent<Collider2D>().enabled = false;
+        isAttacking = false;
     }
 }
