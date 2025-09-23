@@ -1,0 +1,84 @@
+// Author: Copilot
+// Version: 2.0
+// Purpose: Manages enemy damage feedback and knockback on the Root object.
+
+using UnityEngine;
+
+public class EnemyContactDamage : MonoBehaviour, IDamageable
+{
+    [Header("Damage Settings")]
+    public int damage = 1;
+
+    [Header("Knockback Settings")]
+    public float knockbackForce = 5f;
+
+    [Header("Damage Feedback")]
+    public Color damageColor = Color.red;
+    public float damageFlashDuration = 0.1f;
+
+    private Color originalColor;
+    private SpriteRenderer spriteRenderer;
+    private Rigidbody2D rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+
+        // Fetch the SpriteRenderer from the child object
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+        }
+        else
+        {
+            Debug.LogError("SpriteRenderer not found! Ensure the child object has a SpriteRenderer.");
+        }
+    }
+
+    public void TakeDamage(int amount)
+    {
+        StartCoroutine(HandleDamageFeedback());
+    }
+
+    private System.Collections.IEnumerator HandleDamageFeedback()
+    {
+        // Flash the sprite to indicate damage
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = damageColor;
+        }
+
+        yield return new WaitForSeconds(damageFlashDuration);
+
+        // Revert to the original color
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
+        }
+    }
+
+    public void ApplyKnockback(Vector2 forceDirection)
+    {
+        if (rb != null)
+        {
+            rb.AddForce(forceDirection * knockbackForce, ForceMode2D.Impulse);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+        {
+            IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage(damage);
+
+                // Apply knockback to the enemy
+                Vector2 knockbackDirection = (transform.position - collision.transform.position).normalized;
+                ApplyKnockback(knockbackDirection);
+            }
+        }
+    }
+}
