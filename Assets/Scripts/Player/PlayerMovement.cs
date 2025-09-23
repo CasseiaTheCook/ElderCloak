@@ -46,7 +46,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        Debug.Log("Move action triggered");
         moveInput = context.ReadValue<Vector2>();
     }
 
@@ -54,7 +53,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed && jumpsLeft > 0)
         {
-            Debug.Log("Jump action triggered");
             Jump();
         }
     }
@@ -63,7 +61,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed && !isDashing)
         {
-            Debug.Log("Dash action triggered");
             Dash();
         }
     }
