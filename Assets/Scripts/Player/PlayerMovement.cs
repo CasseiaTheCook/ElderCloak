@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Inventory Settings")]
-    public GameObject inventoryMenu; 
+    public GameObject inventoryMenu;
 
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
@@ -25,12 +25,13 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private bool isFacingRight = true;
 
-
     private Rigidbody2D rb;
+    private Animator animator; // Reference to the Animator
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponentInChildren<Animator>(); // Get Animator from child
     }
 
     private void Start()
@@ -42,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleDash();
         Flip();
+        UpdateAnimations(); // Update walking and jumping animations
     }
 
     private void FixedUpdate()
@@ -181,5 +183,23 @@ public class PlayerMovement : MonoBehaviour
         {
             ResetJumpCount();
         }
+    }
+
+    private void UpdateAnimations()
+    {
+        if (animator == null)
+            return;
+
+        // Set isWalking based on horizontal movement
+        animator.SetBool("isWalking", Mathf.Abs(moveInput.x) > 0);
+
+        // Set isJumping based on vertical velocity
+        animator.SetBool("isJumping", !IsGrounded());
+    }
+
+    private bool IsGrounded()
+    {
+        // Check if the player is grounded based on velocity
+        return Mathf.Abs(rb.linearVelocity.y) < 0.01f;
     }
 }

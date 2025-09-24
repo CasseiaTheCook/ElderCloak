@@ -6,6 +6,7 @@ public class PlayerAttack : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameObject attackHitbox;
     [SerializeField] private HealthRegenSystem healthRegenSystem;
+    private Animator animator; // Reference to the Animator
 
     [Header("Attack Settings")]
     [SerializeField] private float attackDuration = 0.2f;
@@ -20,6 +21,9 @@ public class PlayerAttack : MonoBehaviour
 
         if (attackHitbox != null)
             attackCollider = attackHitbox.GetComponent<Collider2D>();
+
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>(); // Get Animator from child if not assigned
     }
 
     public void OnAttack(InputAction.CallbackContext context)
@@ -32,29 +36,28 @@ public class PlayerAttack : MonoBehaviour
 
     private void PerformAttack()
     {
-        if (attackCollider == null)
+        if (animator == null)
         {
-            Debug.LogWarning("AttackHitbox is not assigned on PlayerAttack script!");
+            Debug.LogWarning("Animator is not assigned on PlayerAttack script!");
             return;
         }
 
-      
         isAttacking = true;
-        attackCollider.enabled = true;
 
-       
-        Invoke(nameof(ResetAttack), attackDuration);
+        // Trigger attack animation
+        animator.SetTrigger("Attack"); // Correctly using Trigger for Attack
     }
 
-    private void ResetAttack()
+    // Called via Animation Event or at the end of the attack sequence
+    public void EndAttack()
     {
-        attackCollider.enabled = false;
         isAttacking = false;
     }
 
-    
     public void OnSuccessfulHit()
     {
         healthRegenSystem?.AddFill();
     }
+
+
 }
