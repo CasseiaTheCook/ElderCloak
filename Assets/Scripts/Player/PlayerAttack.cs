@@ -6,15 +6,15 @@ public class PlayerAttack : MonoBehaviour
     [Header("References")]
     private PlayerMovement playerMovement;
     [SerializeField] private GameObject attackHitbox;
-    [SerializeField] private HealthRegenSystem healthRegenSystem;
+    [SerializeField] private SkillRegenSystem SkillRegenSystem;
     private Animator animator; 
     private bool isAttacking = false;
 
 
     private void Awake()
     {
-        if (healthRegenSystem == null)
-            healthRegenSystem = GetComponent<HealthRegenSystem>();
+        if (SkillRegenSystem == null)
+            SkillRegenSystem = GetComponent<SkillRegenSystem>();
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>(); // Get Animator from child if not assigned
@@ -46,7 +46,8 @@ public class PlayerAttack : MonoBehaviour
 
     public void OnHeavyAttack(InputAction.CallbackContext context)
     {
-        if (context.performed && !isAttacking)
+        // Heavy attack can only be performed if not already attacking AND the skill bar is full.
+        if (context.performed && !isAttacking && SkillRegenSystem.IsFull())
         {
             PerformHeavyAttack();
         }
@@ -61,6 +62,9 @@ public class PlayerAttack : MonoBehaviour
         }
 
         isAttacking = true;
+
+        // Consume the skill bar
+        SkillRegenSystem.Use();
 
 
         animator.SetTrigger("HeavyAttack");
@@ -85,7 +89,7 @@ public class PlayerAttack : MonoBehaviour
 
     public void OnSuccessfulHit()
     {
-        healthRegenSystem?.AddFill();
+        SkillRegenSystem?.AddFill();
     }
 
     

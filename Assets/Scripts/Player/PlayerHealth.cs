@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
@@ -19,6 +20,10 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private bool isInvincible = false;
     private bool isKnockedBack = false;
 
+    public event Action<float, float> OnHealthChanged;
+
+    public bool IsAtMaxHealth => currentHealth >= maxHealth;
+
     private void Awake()
     {
         currentHealth = maxHealth;
@@ -35,12 +40,19 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         }
     }
 
+    private void Start()
+    {
+        // Trigger the event on start to set the initial health bar value
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
     public void TakeDamage(float amount, Vector2 knockbackPosition)
     {
         if (isInvincible) return; // Ignore damage while invincible
 
         currentHealth -= amount;
         Debug.Log($"Player took {amount} damage. Current health: {currentHealth}");
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         // Trigger invincibility frames
         StartCoroutine(HandleIFrames());
@@ -61,7 +73,24 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             currentHealth = maxHealth;
         }
         Debug.Log($"Player healed for {amount}. Current health: {currentHealth}");
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
         // Optional: Add a healing visual/sound effect here
+    }
+
+    /// <summary>
+    /// Heals the player by a percentage of their maximum health.
+    /// </summary>
+    /// <param name="percentage">The percentage to heal (e.g., 30 for 30%).</param>
+    public void HealPercentage(float percentage)
+    {
+        float amountToHeal = maxHealth * (percentage / 100f);
+        currentHealth += amountToHeal;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        Debug.Log($"Player healed for {amountToHeal} ({percentage}%). Current health: {currentHealth}");
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     private void Die()

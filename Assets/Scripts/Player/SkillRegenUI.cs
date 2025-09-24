@@ -2,13 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Image))]
-public class HealthRegenUI : MonoBehaviour
+public class SkillRegenUI : MonoBehaviour
 {
     private Image itemImage;
     private float currentFill = 0f;
     private float maxFill = 100f; // This will be set by the PlayerAttack script
 
     public bool IsFull => currentFill >= maxFill;
+    public float CurrentFillAmount => currentFill;
 
     void Awake()
     {
@@ -31,19 +32,17 @@ public class HealthRegenUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Increases the fill amount and updates the UI.
+    /// Increases or decreases the fill amount and updates the UI.
+    /// The value is clamped between 0 and maxFill.
     /// </summary>
     public void AddFill(float amount)
     {
-        if (currentFill >= maxFill) return; // Already full
+        // If we are trying to add fill but it's already full, do nothing.
+        if (amount > 0 && IsFull) return;
 
-        currentFill += amount;
-        if (currentFill > maxFill)
-        {
-            currentFill = maxFill;
-        }
+        currentFill = Mathf.Clamp(currentFill + amount, 0f, maxFill);
 
-        Debug.Log($"UI filled by {amount}. Current: {currentFill}/{maxFill}");
+        // Debug.Log($"UI filled by {amount}. Current: {currentFill}/{maxFill}");
         UpdateUI();
     }
     
@@ -54,7 +53,7 @@ public class HealthRegenUI : MonoBehaviour
     {
         currentFill = 0f;
         UpdateUI();
-        Debug.Log("Health Regen Item used and emptied.");
+        Debug.Log("Skill Regen Item used and emptied.");
     }
 
     private void UpdateUI()
