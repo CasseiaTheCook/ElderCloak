@@ -44,7 +44,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         // Trigger knockback effect
         if (!isKnockedBack)
         {
-            StartCoroutine(ApplyKnockback(knockbackPosition));
+            // Update knockback from player's position instead of the hitbox
+            Vector2 playerPosition = FindObjectOfType<PlayerMovement>().transform.position;
+            StartCoroutine(ApplyKnockback(playerPosition));
         }
 
         // Check if the enemy is dead
@@ -78,12 +80,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
     }
 
-    private System.Collections.IEnumerator ApplyKnockback(Vector2 knockbackPosition)
+    private System.Collections.IEnumerator ApplyKnockback(Vector2 playerPosition)
     {
         isKnockedBack = true;
 
-        // Determine knockback direction (away from the attacker)
-        Vector3 knockbackDirection = (transform.position - (Vector3)knockbackPosition).normalized;
+        // Determine knockback direction (away from the player)
+        Vector3 knockbackDirection = (transform.position - (Vector3)playerPosition).normalized;
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = startPosition + knockbackDirection * knockbackDistance;
 

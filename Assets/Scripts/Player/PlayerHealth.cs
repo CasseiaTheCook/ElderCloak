@@ -45,11 +45,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         // Trigger invincibility frames
         StartCoroutine(HandleIFrames());
 
-        // Trigger knockback effect
-        if (!isKnockedBack)
-        {
-            StartCoroutine(ApplyKnockback(knockbackPosition));
-        }
 
         // Check if the player is dead
         if (currentHealth <= 0)
@@ -103,31 +98,5 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         isInvincible = false;
     }
 
-    private System.Collections.IEnumerator ApplyKnockback(Vector2 knockbackPosition)
-    {
-        isKnockedBack = true;
 
-        // Determine knockback direction (away from the attacker)
-        Vector3 knockbackDirection = (transform.position - (Vector3)knockbackPosition).normalized;
-        Vector3 startPosition = transform.position;
-        Vector3 targetPosition = startPosition + knockbackDirection * knockbackDistance;
-
-        float elapsedTime = 0f;
-
-        // Move towards the target position smoothly over the knockback duration
-        while (elapsedTime < knockbackDuration)
-        {
-            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / knockbackDuration);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        // Ensure the final position is set
-        transform.position = targetPosition;
-
-        yield return new WaitForSeconds(0.1f);
-
-        // Reset the knockback flag
-        isKnockedBack = false;
-    }
 }

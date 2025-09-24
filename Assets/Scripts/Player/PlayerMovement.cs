@@ -27,11 +27,13 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private Animator animator; // Reference to the Animator
+    private PlayerAttack playerAttack; // Reference to PlayerAttack script
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>(); // Get Animator from child
+        playerAttack = GetComponent<PlayerAttack>();   // Get reference to PlayerAttack script
     }
 
     private void Start()
@@ -83,6 +85,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Flip()
     {
+        // If the player is attacking, don't allow flipping
+        if (playerAttack != null && playerAttack.IsAttacking)
+            return;
+
         if (moveInput.x == 0)
             return;
 

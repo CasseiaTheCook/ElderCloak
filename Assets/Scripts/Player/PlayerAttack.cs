@@ -59,5 +59,5 @@ public class PlayerAttack : MonoBehaviour
         healthRegenSystem?.AddFill();
     }
 
-
+    public bool IsAttacking => isAttacking; // Expose the attacking state
 }
