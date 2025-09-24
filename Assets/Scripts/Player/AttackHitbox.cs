@@ -14,10 +14,10 @@ public class AttackHitbox : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         // First, check if the object we hit is tagged as an "Enemy"
-        if (other.CompareTag("Enemy"))
+        if (other.transform.parent.CompareTag("Enemy"))
         {
             // Then, check if it can be damaged
-            IDamageable damageable = other.GetComponent<IDamageable>();
+            IDamageable damageable = other.transform.parent.GetComponent<IDamageable>();
             if (damageable != null)
             {
                 // 1. Tell the player attack script that we hit something

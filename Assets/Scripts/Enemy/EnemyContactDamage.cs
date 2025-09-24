@@ -1,7 +1,3 @@
-// Author: Copilot
-// Version: 2.0
-// Purpose: Manages enemy damage feedback and knockback on the Root object.
-
 using UnityEngine;
 
 public class EnemyContactDamage : MonoBehaviour, IDamageable
@@ -9,19 +5,15 @@ public class EnemyContactDamage : MonoBehaviour, IDamageable
     [Header("Damage Settings")]
     public int damage = 1;
 
-
     [Header("Damage Feedback")]
     public Color damageColor = Color.red;
     public float damageFlashDuration = 0.1f;
 
     private Color originalColor;
     private SpriteRenderer spriteRenderer;
-    private Rigidbody2D rb;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-
         // Fetch the SpriteRenderer from the child object
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         if (spriteRenderer != null)
@@ -56,16 +48,15 @@ public class EnemyContactDamage : MonoBehaviour, IDamageable
         }
     }
 
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Check if the collided object is the player
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
             if (damageable != null)
             {
                 damageable.TakeDamage(damage);
-
             }
         }
     }

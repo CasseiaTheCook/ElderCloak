@@ -1230,10 +1230,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1200350145}
-  - component: {fileID: 1200350148}
-  - component: {fileID: 1200350147}
-  - component: {fileID: 1200350146}
   - component: {fileID: 1200350149}
+  - component: {fileID: 1200350147}
+  - component: {fileID: 1200350150}
   m_Layer: 7
   m_Name: EnemyRoot
   m_TagString: Enemy
@@ -1257,43 +1256,6 @@ Transform:
   - {fileID: 2028395233}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &1200350146
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1200350144}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.008251429, y: -0.020629048}
-  m_Size: {x: 0.9290805, y: 1.9324257}
-  m_Direction: 0
 --- !u!50 &1200350147
 Rigidbody2D:
   serializedVersion: 5
@@ -1321,21 +1283,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &1200350148
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1200350144}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a769860d226618c4fb03df95e01d8e2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyContactDamage
-  damage: 1
-  damageColor: {r: 1, g: 0, b: 0, a: 1}
-  damageFlashDuration: 0.1
 --- !u!114 &1200350149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1350,7 +1297,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   maxHealth: 10
   knockbackForce: 7
+  knockbackDuration: 0.1
   flashDuration: 0.1
+--- !u!114 &1200350150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1200350144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a769860d226618c4fb03df95e01d8e2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyContactDamage
+  damage: 1
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  damageFlashDuration: 0.1
 --- !u!1 &1336859914
 GameObject:
   m_ObjectHideFlags: 0
@@ -2003,6 +1966,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2028395233}
   - component: {fileID: 2028395232}
+  - component: {fileID: 2028395235}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Untagged
@@ -2083,6 +2047,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1200350145}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!70 &2028395235
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2028395228}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1, y: 2}
+  m_Direction: 0
 --- !u!1 &2041628712
 GameObject:
   m_ObjectHideFlags: 0
@@ -2167,7 +2168,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 3
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 99f927ade208a984d9abbd49ebfb748f, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
