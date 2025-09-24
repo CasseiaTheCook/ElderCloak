@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [Header("Health Settings")]
-    public int maxHealth = 5;
+    public float maxHealth = 5;
 
     [Header("Damage Feedback")]
     public float iFrameDuration = 1.5f; // Duration for invulnerability
@@ -13,7 +13,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public float knockbackDistance = 1f; // Distance to knock back
     public float knockbackDuration = 0.2f; // Duration of the knockback effect
 
-    private int currentHealth;
+    private float currentHealth;
     private Color originalColor;
     private SpriteRenderer spriteRenderer;
     private bool isInvincible = false;
@@ -35,7 +35,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         }
     }
 
-    public void TakeDamage(int amount, Vector2 knockbackPosition)
+    public void TakeDamage(float amount, Vector2 knockbackPosition)
     {
         if (isInvincible) return; // Ignore damage while invincible
 

@@ -5,7 +5,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [Header("Health Settings")]
     public int maxHealth = 10;
 
-    private int currentHealth;
+    private float currentHealth;
     private SpriteRenderer spriteRenderer;
 
     [Header("Visual Settings")]
@@ -29,7 +29,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
     }
 
-    public void TakeDamage(int amount, Vector2 knockbackPosition)
+    public void TakeDamage(float amount, Vector2 knockbackPosition)
     {
         // Reduce health
         currentHealth -= amount;

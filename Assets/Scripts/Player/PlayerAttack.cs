@@ -4,26 +4,22 @@ using UnityEngine.InputSystem;
 public class PlayerAttack : MonoBehaviour
 {
     [Header("References")]
+    private PlayerMovement playerMovement;
     [SerializeField] private GameObject attackHitbox;
     [SerializeField] private HealthRegenSystem healthRegenSystem;
-    private Animator animator; // Reference to the Animator
-
-    [Header("Attack Settings")]
-    [SerializeField] private float attackDuration = 0.2f;
-
-    private Collider2D attackCollider;
+    private Animator animator; 
     private bool isAttacking = false;
+
 
     private void Awake()
     {
         if (healthRegenSystem == null)
             healthRegenSystem = GetComponent<HealthRegenSystem>();
 
-        if (attackHitbox != null)
-            attackCollider = attackHitbox.GetComponent<Collider2D>();
-
         if (animator == null)
             animator = GetComponentInChildren<Animator>(); // Get Animator from child if not assigned
+
+            playerMovement = FindFirstObjectByType<PlayerMovement>();
     }
 
     public void OnAttack(InputAction.CallbackContext context)
@@ -48,15 +44,64 @@ public class PlayerAttack : MonoBehaviour
         animator.SetTrigger("Attack"); // Correctly using Trigger for Attack
     }
 
-    // Called via Animation Event or at the end of the attack sequence
+    public void OnHeavyAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed && !isAttacking)
+        {
+            PerformHeavyAttack();
+        }
+    }
+
+    private void PerformHeavyAttack()
+    {
+        if (animator == null)
+        {
+            Debug.LogWarning("Animator is not assigned on PlayerAttack script!");
+            return;
+        }
+
+        isAttacking = true;
+
+
+        animator.SetTrigger("HeavyAttack");
+
+        playerMovement.DecreasedMovement();
+        
+    }
+
+
+    // Called via Animation Event at the end of the normal attack animation
     public void EndAttack()
     {
         isAttacking = false;
+        playerMovement.ResetMovement();
     }
+
+    // Called via Animation Event at the end of the heavy attack animation
+   /** public void EndHeavyAttack()
+    {
+        isHeavyAttacking = false;
+    }**/
 
     public void OnSuccessfulHit()
     {
         healthRegenSystem?.AddFill();
+    }
+
+    
+
+    // Called by Animation Event
+    public void EnableAttackHitbox()
+    {
+        if (attackHitbox != null)
+            attackHitbox.SetActive(true);
+    }
+
+    // Called by Animation Event
+    public void DisableAttackHitbox()
+    {
+        if (attackHitbox != null)
+            attackHitbox.SetActive(false);
     }
 
     public bool IsAttacking => isAttacking; // Expose the attacking state

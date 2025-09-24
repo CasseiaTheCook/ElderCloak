@@ -3,15 +3,15 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Inventory Settings")]
-    public GameObject inventoryMenu;
-
+   
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
+    [HideInInspector] public float currentMoveSpeed;
 
     [Header("Jump Settings")]
     public float jumpForce = 12f;
     public int maxJumps = 2;
+    private bool canJump=true;
 
     [Header("Dash Settings")]
     public float dashDistance = 5f;
@@ -39,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         ResetJumpCount();
+        currentMoveSpeed = moveSpeed;
     }
 
     private void Update()
@@ -63,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed && jumpsLeft > 0)
+        if (context.performed && jumpsLeft > 0 && canJump)
         {
             Jump();
         }
@@ -109,20 +110,25 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
-        float currentMoveSpeed = moveSpeed;
-        if (inventoryMenu != null && inventoryMenu.activeInHierarchy)
-        {
-            currentMoveSpeed *= 0.5f;
-            canDash = false;
-            jumpForce = 0f;
-        }
-        else
-        {
-            canDash = true;
-            jumpForce = 12f;
-        }
-
+  
         rb.linearVelocity = new Vector2(moveInput.x * currentMoveSpeed, rb.linearVelocity.y);
+    }
+
+    public void DecreasedMovement()
+    {
+        currentMoveSpeed *= 0.5f;
+        Debug.Log(currentMoveSpeed);
+        canDash = false;
+        canJump = false;
+           
+    }
+
+    public void ResetMovement()
+    {
+            currentMoveSpeed = moveSpeed;
+            canDash = true;
+            canJump = true;
+            jumpForce = 12f;
     }
 
     private void Jump()

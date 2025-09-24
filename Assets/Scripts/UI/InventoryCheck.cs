@@ -4,33 +4,40 @@ using PlayerInputActions = PlayerInput;
 
 public class InventoryCheck : MonoBehaviour
 {
-    public GameObject InventoryMenu;
+    private GameObject InventoryMenu;
 
     
-    private PlayerInputActions playerInputActions;
+
     private bool inventoryOpen = false;
 
     private void Awake()
     {
-       
-        playerInputActions = new PlayerInputActions();
+       InventoryMenu=GameObject.Find("Inventory");
+       if(InventoryMenu==null)
+       {
+        Debug.LogError("InventoryMenu GameObject not found in the scene.");
+       }
+       else
+       {
+        InventoryMenu.SetActive(false);
+       }
     }
-
-    private void OnEnable()
-    {
-        playerInputActions.PlayerControls.Enable();
-        playerInputActions.PlayerControls.Inventory.performed += ToggleInventory;
-    }
-
-    private void OnDisable()
-    {
-        playerInputActions.PlayerControls.Disable();
-        playerInputActions.PlayerControls.Inventory.performed -= ToggleInventory;
-    }
-
-    private void ToggleInventory(InputAction.CallbackContext context)
+    public void ToggleInventory(InputAction.CallbackContext context)
     {
         inventoryOpen = !inventoryOpen;
         InventoryMenu.SetActive(inventoryOpen);
+
+        PlayerMovement playerMovement = FindFirstObjectByType<PlayerMovement>();
+        if (playerMovement != null)
+        {
+            if (inventoryOpen)
+            {
+                playerMovement.DecreasedMovement();
+            }
+            else
+            {
+                playerMovement.ResetMovement();
+            }
+        }
     }
 }

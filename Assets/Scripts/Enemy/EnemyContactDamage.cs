@@ -27,7 +27,7 @@ public class EnemyContactDamage : MonoBehaviour, IDamageable
         }
     }
 
-    public void TakeDamage(int amount, Vector2 knockbackPosition)
+    public void TakeDamage(float amount, Vector2 knockbackPosition)
     {
         StartCoroutine(HandleDamageFeedback());
     }

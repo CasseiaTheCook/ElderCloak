@@ -4,6 +4,8 @@ using UnityEngine;
 public class AttackHitbox : MonoBehaviour
 {
     private PlayerAttack playerAttack;
+    
+    public float damageAmount = 1f;
 
     private void Awake()
     {
@@ -24,7 +26,7 @@ public class AttackHitbox : MonoBehaviour
                 playerAttack?.OnSuccessfulHit();
                 // 2. Deal damage to the enemy, passing the player's position for knockback
                 Vector2 playerPosition = transform.parent.position;
-                damageable.TakeDamage(1, playerPosition);
+                damageable.TakeDamage(damageAmount, playerPosition);
             }
         }
     }
