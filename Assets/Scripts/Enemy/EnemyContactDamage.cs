@@ -57,7 +57,8 @@ public class EnemyContactDamage : MonoBehaviour, IDamageable
             IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
             if (damageable != null)
             {
-                damageable.TakeDamage(damage,Vector2.zero);
+                // Pass this enemy's position for proper knockback calculation
+                damageable.TakeDamage(damage, transform.position);
             }
         }
     }
