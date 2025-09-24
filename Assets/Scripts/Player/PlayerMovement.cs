@@ -16,10 +16,14 @@ public class PlayerMovement : MonoBehaviour
     [Header("Dash Settings")]
     public float dashDistance = 5f;
     public float dashDuration = 0.2f;
+    [SerializeField] private float dashCooldown = 1f;
+    [Tooltip("If true, the player becomes invincible during the dash. This is controlled by SkillRegenSystem.")]
+    [SerializeField] public bool canShadowDash = false;
     public bool canDash = true;
 
     private int jumpsLeft;
     private bool isDashing;
+    private bool isDashOnCooldown = false;
     private float dashTimeRemaining;
     private Vector2 dashDirection;
     private Vector2 moveInput;
@@ -28,12 +32,14 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator; // Reference to the Animator
     private PlayerAttack playerAttack; // Reference to PlayerAttack script
+    private PlayerHealth playerHealth; // Reference to PlayerHealth script
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>(); // Get Animator from child
         playerAttack = GetComponent<PlayerAttack>();   // Get reference to PlayerAttack script
+        playerHealth = GetComponent<PlayerHealth>();   // Get reference to PlayerHealth script
     }
 
     private void Start()
@@ -78,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.performed && !isDashing)
+        if (context.performed && !isDashing && canDash && !isDashOnCooldown)
         {
             Dash();
         }
@@ -139,6 +145,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Dash()
     {
+        // Make the player invincible at the start of the dash if enabled
+        if (canShadowDash)
+        {
+            playerHealth?.SetInvincibility(true);
+        }
+
+        isDashOnCooldown = true;
         isDashing = true;
         dashTimeRemaining = dashDuration;
 
@@ -152,12 +165,6 @@ public class PlayerMovement : MonoBehaviour
 
         // Lock the Rigidbody's y-axis to prevent any vertical movement
         rb.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-
-        if (canDash == false)
-        {
-            isDashing = false;
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        }
     }
 
     private void HandleDash()
@@ -183,10 +190,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndDash()
     {
+        // Make the player vulnerable again at the end of the dash if enabled
+        if (canShadowDash)
+        {
+            playerHealth?.SetInvincibility(false);
+        }
+
         isDashing = false;
 
         // Unlock the Rigidbody's y-axis to restore normal vertical movement
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        StartCoroutine(DashCooldownRoutine());
+    }
+
+    private System.Collections.IEnumerator DashCooldownRoutine()
+    {
+        yield return new WaitForSeconds(dashCooldown);
+        isDashOnCooldown = false;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

@@ -5,6 +5,9 @@ public class SkillRegenSystem : MonoBehaviour
     [Header("References")]
     [SerializeField] private SkillRegenUI skillRegenUI;
 
+    [Header("Full Bar Abilities")]
+    [SerializeField] private PlayerMovement playerMovement; // Reference to control dash abilities
+
     [Header("Bar Settings")]
     [SerializeField] private float maxFillAmount = 100f;
     [SerializeField] private float fillPerHit = 25f;
@@ -12,6 +15,11 @@ public class SkillRegenSystem : MonoBehaviour
 
     private void Start()
     {
+        if (playerMovement == null)
+        {
+            playerMovement = FindFirstObjectByType<PlayerMovement>();
+        }
+
         if (skillRegenUI != null)
         {
             skillRegenUI.Initialize(maxFillAmount);
@@ -24,6 +32,12 @@ public class SkillRegenSystem : MonoBehaviour
         if (skillRegenUI != null && !skillRegenUI.IsFull && skillRegenUI.CurrentFillAmount > 0)
         {
             skillRegenUI.AddFill(-fillDecayRate * Time.deltaTime);
+        }
+
+        // Update shadow dash availability based on whether the bar is full
+        if (playerMovement != null)
+        {
+            playerMovement.canShadowDash = IsFull();
         }
     }
 

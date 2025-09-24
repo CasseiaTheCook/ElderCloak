@@ -11,6 +11,7 @@ public class HealthItemSystem : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI itemCounterText;
+    [SerializeField] private TextMeshProUGUI itemCounterInventoryText;
 
     private int currentItemCount;
     private PlayerHealth playerHealth;
@@ -61,6 +62,10 @@ public class HealthItemSystem : MonoBehaviour
         if (itemCounterText != null)
         {
             itemCounterText.text = currentItemCount.ToString();
+        }
+        if (itemCounterInventoryText != null)
+        {
+            itemCounterInventoryText.text = currentItemCount.ToString();
         }
     }
 }

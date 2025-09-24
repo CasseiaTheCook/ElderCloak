@@ -18,11 +18,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private Color originalColor;
     private SpriteRenderer spriteRenderer;
     private bool isInvincible = false;
-    private bool isKnockedBack = false;
 
     public event Action<float, float> OnHealthChanged;
 
     public bool IsAtMaxHealth => currentHealth >= maxHealth;
+    public float CurrentHealthForUI => currentHealth; // Property to expose current health for UI
 
     private void Awake()
     {
@@ -101,31 +101,29 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private System.Collections.IEnumerator HandleIFrames()
     {
-        isInvincible = true;
-
-        // Ignore collisions between the player and enemies immediately
-        Physics2D.IgnoreLayerCollision(3, 7, true); // Player = Layer 3, Enemy = Layer 7
-
-        // Change the sprite color to indicate invincibility
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = damageColor;
-        }
+        // Start invincibility with visual feedback
+        SetInvincibility(true, true);
 
         // Wait for the duration of invincibility
         yield return new WaitForSeconds(iFrameDuration);
 
-        // Re-enable collisions between the player and enemies
-        Physics2D.IgnoreLayerCollision(3, 7, false);
-
-        // Revert the sprite color
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = originalColor;
-        }
-
-        isInvincible = false;
+        // End invincibility and revert visuals
+        SetInvincibility(false, true);
     }
 
+    /// <summary>
+    /// Sets the player's invincibility state.
+    /// </summary>
+    /// <param name="isInvincible">True to make the player invincible, false to make them vulnerable.</param>
+    /// <param name="applyVisuals">If true, applies the damage color feedback.</param>
+    public void SetInvincibility(bool isInvincible, bool applyVisuals = false)
+    {
+        this.isInvincible = isInvincible;
+        Physics2D.IgnoreLayerCollision(3, 7, isInvincible); // Player = Layer 3, Enemy = Layer 7
 
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = (isInvincible && applyVisuals) ? damageColor : originalColor;
+        }
+    }
 }

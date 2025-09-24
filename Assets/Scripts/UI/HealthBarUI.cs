@@ -15,7 +15,7 @@ public class HealthBarUI : MonoBehaviour
     private void Start()
     {
         // Find the PlayerHealth component in the scene
-        playerHealth = FindObjectOfType<PlayerHealth>();
+        playerHealth = FindFirstObjectByType<PlayerHealth>();
         if (playerHealth != null)
         {
             // Subscribe to the health changed event

@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - HitBox
   - UI
+  - Inventory
   layers:
   - Default
   - TransparentFX

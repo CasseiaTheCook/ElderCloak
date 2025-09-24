@@ -45,7 +45,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (!isKnockedBack)
         {
             // Update knockback from player's position instead of the hitbox
-            Vector2 playerPosition = FindObjectOfType<PlayerMovement>().transform.position;
+            Vector2 playerPosition = FindFirstObjectByType<PlayerMovement>().transform.position;
             StartCoroutine(ApplyKnockback(playerPosition));
         }
 
