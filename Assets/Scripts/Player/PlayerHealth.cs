@@ -9,10 +9,15 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public float iFrameDuration = 1.5f; // Duration for invulnerability
     public Color damageColor = Color.red;
 
+    [Header("Knockback Settings")]
+    public float knockbackDistance = 1f; // Distance to knock back
+    public float knockbackDuration = 0.2f; // Duration of the knockback effect
+
     private int currentHealth;
     private Color originalColor;
     private SpriteRenderer spriteRenderer;
     private bool isInvincible = false;
+    private bool isKnockedBack = false;
 
     private void Awake()
     {
@@ -30,7 +35,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         }
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount, Vector2 knockbackPosition)
     {
         if (isInvincible) return; // Ignore damage while invincible
 
@@ -39,6 +44,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         // Trigger invincibility frames
         StartCoroutine(HandleIFrames());
+
+        // Trigger knockback effect
+        if (!isKnockedBack)
+        {
+            StartCoroutine(ApplyKnockback(knockbackPosition));
+        }
 
         // Check if the player is dead
         if (currentHealth <= 0)
@@ -92,16 +103,31 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         isInvincible = false;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private System.Collections.IEnumerator ApplyKnockback(Vector2 knockbackPosition)
     {
-        // If invincible, ignore push behavior by canceling physics force
-        if (isInvincible && collision.gameObject.layer == 7) // Enemy Layer
+        isKnockedBack = true;
+
+        // Determine knockback direction (away from the attacker)
+        Vector3 knockbackDirection = (transform.position - (Vector3)knockbackPosition).normalized;
+        Vector3 startPosition = transform.position;
+        Vector3 targetPosition = startPosition + knockbackDirection * knockbackDistance;
+
+        float elapsedTime = 0f;
+
+        // Move towards the target position smoothly over the knockback duration
+        while (elapsedTime < knockbackDuration)
         {
-            Rigidbody2D enemyRb = collision.gameObject.GetComponent<Rigidbody2D>();
-            if (enemyRb != null)
-            {
-                enemyRb.linearVelocity = Vector2.zero; // Stop enemy movement caused by collision
-            }
+            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / knockbackDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
+
+        // Ensure the final position is set
+        transform.position = targetPosition;
+
+        yield return new WaitForSeconds(0.1f);
+
+        // Reset the knockback flag
+        isKnockedBack = false;
     }
 }

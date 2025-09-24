@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyContactDamage : MonoBehaviour, IDamageable
@@ -26,7 +27,7 @@ public class EnemyContactDamage : MonoBehaviour, IDamageable
         }
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount, Vector2 knockbackPosition)
     {
         StartCoroutine(HandleDamageFeedback());
     }
@@ -56,7 +57,7 @@ public class EnemyContactDamage : MonoBehaviour, IDamageable
             IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
             if (damageable != null)
             {
-                damageable.TakeDamage(damage);
+                damageable.TakeDamage(damage,Vector2.zero);
             }
         }
     }

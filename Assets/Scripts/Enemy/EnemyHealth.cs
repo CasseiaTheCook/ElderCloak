@@ -8,12 +8,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private int currentHealth;
     private SpriteRenderer spriteRenderer;
 
-    [Header("Knockback Settings")]
-    public float knockbackForce = 5f;
-    public float knockbackDuration = 0.1f; // Duration of the knockback effect
+    [Header("Visual Settings")]
     public float flashDuration = 0.1f; // Duration for the red flash effect
 
-    private bool isKnockedBack = false;
+    [Header("Knockback Settings")]
+    public float knockbackDistance = 0.5f; // Distance to knock back
+    public float knockbackDuration = 0.1f; // Duration of the knockback effect
+
+    private bool isKnockedBack = false; // Flag to prevent overlapping knockbacks
 
     private void Awake()
     {
@@ -27,20 +29,22 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount, Vector2 knockbackPosition)
     {
         // Reduce health
         currentHealth -= amount;
         Debug.Log($"Enemy took {amount} damage. Current health: {currentHealth}");
 
-        // Trigger default knockback effect (optional)
-        Vector2 defaultKnockbackDirection = Vector2.zero; // Default to no knockback
-        StartCoroutine(ApplyKnockback(defaultKnockbackDirection));
-
         // Trigger red flash effect
         if (spriteRenderer != null)
         {
             StartCoroutine(FlashRed());
+        }
+
+        // Trigger knockback effect
+        if (!isKnockedBack)
+        {
+            StartCoroutine(ApplyKnockback(knockbackPosition));
         }
 
         // Check if the enemy is dead
@@ -74,27 +78,31 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
     }
 
-    private System.Collections.IEnumerator ApplyKnockback(Vector2 knockbackDirection)
+    private System.Collections.IEnumerator ApplyKnockback(Vector2 knockbackPosition)
     {
         isKnockedBack = true;
 
-        // Calculate the knockback target position
-        Vector3 originalPosition = transform.position;
-        Vector3 knockbackPosition = originalPosition + (Vector3)knockbackDirection.normalized * knockbackForce;
+        // Determine knockback direction (away from the attacker)
+        Vector3 knockbackDirection = (transform.position - (Vector3)knockbackPosition).normalized;
+        Vector3 startPosition = transform.position;
+        Vector3 targetPosition = startPosition + knockbackDirection * knockbackDistance;
 
         float elapsedTime = 0f;
 
-        // Smoothly move the enemy to the knockback position
+        // Move towards the target position smoothly over the knockback duration
         while (elapsedTime < knockbackDuration)
         {
-            transform.position = Vector3.Lerp(originalPosition, knockbackPosition, elapsedTime / knockbackDuration);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / knockbackDuration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        // Ensure the enemy ends at the exact knockback position
-        transform.position = knockbackPosition;
+        // Ensure the final position is set
+        transform.position = targetPosition;
 
+        yield return new WaitForSeconds(flashDuration);
+
+        // Reset the knockback flag
         isKnockedBack = false;
     }
 }

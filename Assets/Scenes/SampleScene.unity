@@ -1296,9 +1296,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   maxHealth: 10
-  knockbackForce: 7
-  knockbackDuration: 0.1
   flashDuration: 0.1
+  knockbackDistance: 1
+  knockbackDuration: 0.1
 --- !u!114 &1200350150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2137,6 +2137,8 @@ MonoBehaviour:
   maxHealth: 5
   iFrameDuration: 1
   damageColor: {r: 1, g: 0, b: 0, a: 1}
+  knockbackDistance: 1
+  knockbackDuration: 0.2
 --- !u!114 &2041628715
 MonoBehaviour:
   m_ObjectHideFlags: 0
