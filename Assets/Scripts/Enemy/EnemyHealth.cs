@@ -49,24 +49,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // Check if the collision is with the player's attack hitbox
-        if (collision.CompareTag("HitBox"))
-        {
-            // Apply damage
-            TakeDamage(1);
-
-            // Apply knockback
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                Vector2 knockbackDirection = (transform.position - collision.transform.position).normalized;
-                rb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
-            }
-        }
-    }
-
     private System.Collections.IEnumerator FlashRed()
     {
         // Change color to red

@@ -4,12 +4,23 @@ using UnityEngine.InputSystem;
 public class PlayerAttack : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject attackHitbox; // Reference to the attack hitbox object
+    [SerializeField] private GameObject attackHitbox;
+    [SerializeField] private HealthRegenSystem healthRegenSystem;
 
     [Header("Attack Settings")]
-    [SerializeField] private float attackDuration = 0.2f; // Duration for which the hitbox is active
+    [SerializeField] private float attackDuration = 0.2f;
 
+    private Collider2D attackCollider;
     private bool isAttacking = false;
+
+    private void Awake()
+    {
+        if (healthRegenSystem == null)
+            healthRegenSystem = GetComponent<HealthRegenSystem>();
+
+        if (attackHitbox != null)
+            attackCollider = attackHitbox.GetComponent<Collider2D>();
+    }
 
     public void OnAttack(InputAction.CallbackContext context)
     {
@@ -21,23 +32,29 @@ public class PlayerAttack : MonoBehaviour
 
     private void PerformAttack()
     {
-        if (attackHitbox == null)
+        if (attackCollider == null)
         {
-            Debug.LogWarning("AttackHitbox is not assigned!");
+            Debug.LogWarning("AttackHitbox is not assigned on PlayerAttack script!");
             return;
         }
 
-        // Activate the hitbox collider
+      
         isAttacking = true;
-        attackHitbox.GetComponent<Collider2D>().enabled = true;
+        attackCollider.enabled = true;
 
-        // Deactivate the hitbox after a short duration
+       
         Invoke(nameof(ResetAttack), attackDuration);
     }
 
     private void ResetAttack()
     {
-        attackHitbox.GetComponent<Collider2D>().enabled = false;
+        attackCollider.enabled = false;
         isAttacking = false;
+    }
+
+    
+    public void OnSuccessfulHit()
+    {
+        healthRegenSystem?.AddFill();
     }
 }

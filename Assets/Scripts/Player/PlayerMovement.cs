@@ -3,6 +3,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Inventory Settings")]
+    public GameObject inventoryMenu; 
+
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
 
@@ -13,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Dash Settings")]
     public float dashDistance = 5f;
     public float dashDuration = 0.2f;
+    public bool canDash = true;
 
     private int jumpsLeft;
     private bool isDashing;
@@ -20,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 dashDirection;
     private Vector2 moveInput;
     private bool isFacingRight = true;
+
 
     private Rigidbody2D rb;
 
@@ -96,7 +101,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
-        rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
+        float currentMoveSpeed = moveSpeed;
+        if (inventoryMenu != null && inventoryMenu.activeInHierarchy)
+        {
+            currentMoveSpeed *= 0.5f;
+            canDash = false;
+            jumpForce = 0f;
+        }
+        else
+        {
+            canDash = true;
+            jumpForce = 12f;
+        }
+
+        rb.linearVelocity = new Vector2(moveInput.x * currentMoveSpeed, rb.linearVelocity.y);
     }
 
     private void Jump()
@@ -120,6 +138,12 @@ public class PlayerMovement : MonoBehaviour
 
         // Lock the Rigidbody's y-axis to prevent any vertical movement
         rb.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+
+        if (canDash == false)
+        {
+            isDashing = false;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
     }
 
     private void HandleDash()

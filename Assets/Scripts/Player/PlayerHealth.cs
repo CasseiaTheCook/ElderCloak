@@ -47,6 +47,17 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         }
     }
 
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        Debug.Log($"Player healed for {amount}. Current health: {currentHealth}");
+        // Optional: Add a healing visual/sound effect here
+    }
+
     private void Die()
     {
         Debug.Log("Player has died!");
