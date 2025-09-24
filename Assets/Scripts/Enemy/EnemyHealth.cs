@@ -85,7 +85,32 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         // Determine knockback direction (away from the attacker)
         Vector3 knockbackDirection = (transform.position - (Vector3)knockbackPosition).normalized;
         Vector3 startPosition = transform.position;
-        Vector3 targetPosition = startPosition + knockbackDirection * knockbackDistance;
+        
+        // Check if enemy is grounded to modify knockback behavior
+        IGroundDetection groundDetection = GetComponent<IGroundDetection>();
+        bool isGrounded = groundDetection != null && groundDetection.IsGrounded();
+        
+        Vector3 targetPosition;
+        if (isGrounded)
+        {
+            // Only apply horizontal knockback if grounded
+            knockbackDirection.y = 0;
+            knockbackDirection = knockbackDirection.normalized;
+            
+            // Handle edge case where knockback is purely vertical (no horizontal component)
+            if (knockbackDirection.magnitude < 0.1f)
+            {
+                // Use a random horizontal direction if no horizontal knockback exists
+                knockbackDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f) > 0 ? 1f : -1f, 0, 0);
+            }
+            
+            targetPosition = startPosition + knockbackDirection * knockbackDistance;
+        }
+        else
+        {
+            // Apply full knockback if airborne
+            targetPosition = startPosition + knockbackDirection * knockbackDistance;
+        }
 
         float elapsedTime = 0f;
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IGroundDetection
 {
     [Header("Inventory Settings")]
     public GameObject inventoryMenu;
@@ -197,7 +197,7 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("isJumping", !IsGrounded());
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
         // Check if the player is grounded based on velocity
         return Mathf.Abs(rb.linearVelocity.y) < 0.01f;
