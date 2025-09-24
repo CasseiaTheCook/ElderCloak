@@ -96,6 +96,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             // Only apply horizontal knockback if grounded
             knockbackDirection.y = 0;
             knockbackDirection = knockbackDirection.normalized;
+            
+            // Handle edge case where knockback is purely vertical (no horizontal component)
+            if (knockbackDirection.magnitude < 0.1f)
+            {
+                // Use a random horizontal direction if no horizontal knockback exists
+                knockbackDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f) > 0 ? 1f : -1f, 0, 0);
+            }
+            
             targetPosition = startPosition + knockbackDirection * knockbackDistance;
         }
         else
