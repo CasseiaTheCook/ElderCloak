@@ -7,13 +7,16 @@ public class EnemyAI : MonoBehaviour
     private Transform player; // Player's Transform
     public float patrolSpeed = 2f;
     public float chaseSpeed = 5f;
-    public float aggroRange = 5f; // Aggro range (narrow field of view)
-    public float chaseBoundaryRange = 10f; // Chase boundary
+    public float aggroRange = 5f; // Level 1: Start chasing
+    public float chaseRange = 10f; // Level 2: Continue chasing
     public float idleTime = 3f; // Wait time in idle state
+    public float chaseTimeout = 5f; // Maximum chase time
+
     private Vector3 targetPoint;
     private bool isChasing = false;
     private bool isIdle = false;
     private float idleTimer = 0f;
+    private float chaseTimer = 0f;
 
     void Start()
     {
@@ -41,24 +44,31 @@ public class EnemyAI : MonoBehaviour
 
     void Patrol(float distanceToPlayer)
     {
-        Debug.Log("Patrol State");
-
-        // Start chasing if the player enters the aggro range
+        // Start chasing only if the player enters aggro range
         if (distanceToPlayer <= aggroRange)
         {
             isChasing = true;
-            Debug.Log("Transition to Chase State");
+            chaseTimer = 0f; // Reset chase timer
             return;
         }
 
-        // Move between points only on the x-axis
+        // Move between patrol points on the x-axis
         Vector3 newPosition = transform.position;
         newPosition.x = Mathf.MoveTowards(transform.position.x, targetPoint.x, patrolSpeed * Time.deltaTime);
         transform.position = newPosition;
 
-        // Switch to the other point upon reaching the target
+        // If reached patrol border and player is out of chase range, go idle
         if (Mathf.Abs(transform.position.x - targetPoint.x) < 0.1f)
         {
+            bool atBorder = targetPoint.x == pointA.position.x || targetPoint.x == pointB.position.x;
+            if (atBorder && distanceToPlayer > chaseRange)
+            {
+                isIdle = true;
+                idleTimer = 0f;
+                return;
+            }
+
+            // Switch to the other point upon reaching the target
             targetPoint = targetPoint.x == pointA.position.x
                 ? new Vector3(pointB.position.x, transform.position.y, transform.position.z)
                 : new Vector3(pointA.position.x, transform.position.y, transform.position.z);
@@ -67,18 +77,36 @@ public class EnemyAI : MonoBehaviour
 
     void ChasePlayer(float distanceToPlayer)
     {
-        Debug.Log("Chase State");
-
-        // Return to patrol if the player exits the chase boundary or aggro range
-        if (distanceToPlayer > chaseBoundaryRange)
+        // Stop chasing if the player leaves the chase range
+        if (distanceToPlayer > chaseRange)
         {
             isChasing = false;
-            Debug.Log("Transition to Patrol State");
-            targetPoint = ClosestPatrolPoint(); // Return to the closest patrol point
+            targetPoint = ClosestPatrolPoint();
+            chaseTimer = 0f; // Reset chase timer
             return;
         }
 
-        // Move quickly toward the player only on the x-axis
+        // If the player is in the aggro range, reset the chase timer
+        if (distanceToPlayer <= aggroRange)
+        {
+            chaseTimer = 0f; // Reset timer since the player is close
+        }
+        else
+        {
+            // Increment the chase timer if the player is only in the chase range
+            chaseTimer += Time.deltaTime;
+            if (chaseTimer >= chaseTimeout)
+            {
+                // Stop chasing after the timeout if the player doesn't enter the aggro range
+                isChasing = false;
+                isIdle = true;
+                idleTimer = 0f;
+                chaseTimer = 0f; // Reset chase timer
+                return;
+            }
+        }
+
+        // Move toward the player's position only on the x-axis
         Vector3 newPosition = transform.position;
         newPosition.x = Mathf.MoveTowards(transform.position.x, player.position.x, chaseSpeed * Time.deltaTime);
         transform.position = newPosition;
@@ -86,14 +114,12 @@ public class EnemyAI : MonoBehaviour
 
     void HandleIdleState(float distanceToPlayer)
     {
-        Debug.Log("Idle State");
-
-        // Resume chasing if the player returns to the patrol area
-        if (distanceToPlayer <= chaseBoundaryRange && IsPlayerInPatrolArea())
+        // Resume chasing if the player enters the aggro range
+        if (distanceToPlayer <= aggroRange)
         {
             isIdle = false;
             isChasing = true;
-            Debug.Log("Transition to Chase State");
+            chaseTimer = 0f; // Reset chase timer
             return;
         }
 
@@ -102,8 +128,11 @@ public class EnemyAI : MonoBehaviour
         if (idleTimer >= idleTime)
         {
             isIdle = false;
-            Debug.Log("Transition to Patrol State");
-            targetPoint = ClosestPatrolPoint();
+
+            // After idling, set the next patrol target to the opposite border
+            targetPoint = targetPoint.x == pointA.position.x
+                ? new Vector3(pointB.position.x, transform.position.y, transform.position.z)
+                : new Vector3(pointA.position.x, transform.position.y, transform.position.z);
         }
     }
 
@@ -117,11 +146,29 @@ public class EnemyAI : MonoBehaviour
             : new Vector3(pointB.position.x, transform.position.y, transform.position.z);
     }
 
-    bool IsPlayerInPatrolArea()
+    void OnDrawGizmosSelected()
     {
-        // Check if the player is within the patrol area
-        float distanceToA = Mathf.Abs(player.position.x - pointA.position.x);
-        float distanceToB = Mathf.Abs(player.position.x - pointB.position.x);
-        return distanceToA <= chaseBoundaryRange || distanceToB <= chaseBoundaryRange;
+        if (pointA != null && pointB != null)
+        {
+            // Draw patrol area
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(
+                new Vector3(pointA.position.x, transform.position.y, transform.position.z),
+                new Vector3(pointB.position.x, transform.position.y, transform.position.z)
+            );
+
+            // Draw patrol points
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(pointA.position, 0.15f);
+            Gizmos.DrawSphere(pointB.position, 0.15f);
+        }
+
+        // Draw aggro range
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, aggroRange);
+
+        // Draw chase range
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, chaseRange);
     }
 }
