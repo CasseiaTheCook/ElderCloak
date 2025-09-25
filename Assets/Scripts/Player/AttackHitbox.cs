@@ -1,11 +1,15 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(Collider2D))]
 public class AttackHitbox : MonoBehaviour
 {
     private PlayerAttack playerAttack;
-    
+
     public float damageAmount = 1f;
+
+    [Header("Hit Feedback")]
+    [SerializeField] private float hitstopDuration = 0.5f; // Duration of hitstop in seconds
 
     private void Awake()
     {
@@ -27,7 +31,20 @@ public class AttackHitbox : MonoBehaviour
                 // 2. Deal damage to the enemy, passing the player's position for knockback
                 Vector2 playerPosition = transform.parent.position;
                 damageable.TakeDamage(damageAmount, playerPosition);
+                // 3. Shake the camera on hit
+                CameraShaker.Instance?.HitShake();
+                // 4. Hitstop for better hit feeling
+                StartCoroutine(HitstopCoroutine());
             }
         }
+    }
+
+    private IEnumerator HitstopCoroutine()
+    {
+        float originalTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+        // Wait for real time, not affected by timescale
+        yield return new WaitForSecondsRealtime(hitstopDuration);
+        Time.timeScale = originalTimeScale;
     }
 }

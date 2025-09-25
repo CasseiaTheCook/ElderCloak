@@ -975,6 +975,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7812aa8da6d76341b2159769f1b8052, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  hitShakeDuration: 0.03
+  hitShakeMagnitude: 0.3
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1467,6 +1469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackHitbox
   damageAmount: 1
+  hitstopDuration: 0.05
 --- !u!1 &887608236
 GameObject:
   m_ObjectHideFlags: 0
@@ -2080,7 +2083,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48032469358ea6a409e8dc1cb4286404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackHitbox
-  damageAmount: 5
+  damageAmount: 10
+  hitstopDuration: 0.5
 --- !u!58 &1287557874
 CircleCollider2D:
   m_ObjectHideFlags: 0
