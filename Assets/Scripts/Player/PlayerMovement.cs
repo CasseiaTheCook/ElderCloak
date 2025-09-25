@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     public float dashDistance = 5f;
     public float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 1f;
+    [SerializeField] private float dashStaminaCost = 25f;
     [Tooltip("If true, the player becomes invincible during the dash. This is controlled by SkillRegenSystem.")]
     [SerializeField] public bool canShadowDash = false;
     public bool canDash = true;
@@ -33,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator; // Reference to the Animator
     private PlayerAttack playerAttack; // Reference to PlayerAttack script
     private PlayerHealth playerHealth; // Reference to PlayerHealth script
+    private PlayerStamina playerStamina; // Reference to PlayerStamina script
 
     private void Awake()
     {
@@ -40,6 +42,8 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponentInChildren<Animator>(); // Get Animator from child
         playerAttack = GetComponent<PlayerAttack>();   // Get reference to PlayerAttack script
         playerHealth = GetComponent<PlayerHealth>();   // Get reference to PlayerHealth script
+        playerStamina = GetComponent<PlayerStamina>(); // Get reference to PlayerStamina script
+        playerStamina.OnLowStaminaStateChanged += SetExhaustedState;
     }
 
     private void Start()
@@ -53,6 +57,11 @@ public class PlayerMovement : MonoBehaviour
         HandleDash();
         Flip();
         UpdateAnimations(); // Update walking and jumping animations
+    }
+
+    private void OnDestroy()
+    {
+        playerStamina.OnLowStaminaStateChanged -= SetExhaustedState;
     }
 
     private void FixedUpdate()
@@ -84,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.performed && !isDashing && canDash && !isDashOnCooldown)
+        if (context.performed && !isDashing && canDash && !isDashOnCooldown && playerStamina.HasEnoughStamina(dashStaminaCost))
         {
             Dash();
         }
@@ -145,6 +154,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Dash()
     {
+        // Consume stamina for dashing
+        playerStamina.ConsumeStamina(dashStaminaCost);
+
         // Make the player invincible at the start of the dash if enabled
         if (canShadowDash)
         {
@@ -234,5 +246,11 @@ public class PlayerMovement : MonoBehaviour
     {
         // Check if the player is grounded based on velocity
         return Mathf.Abs(rb.linearVelocity.y) < 0.01f;
+    }
+
+    private void SetExhaustedState(bool isExhausted)
+    {
+        // When exhausted, player cannot dash.
+        canDash = !isExhausted;
     }
 }
