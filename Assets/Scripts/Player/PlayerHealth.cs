@@ -18,6 +18,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private Color originalColor;
     private SpriteRenderer spriteRenderer;
     private bool isInvincible = false;
+    private PlayerParry playerParry; // Reference to the parry script
 
     public event Action<float, float> OnHealthChanged;
 
@@ -27,6 +28,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void Awake()
     {
         currentHealth = maxHealth;
+        playerParry = GetComponent<PlayerParry>();
 
         // Fetch the SpriteRenderer from the child object
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -48,6 +50,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount, Vector2 knockbackPosition)
     {
+        // --- PARRY CHECK ---
+        // If the player is currently in a parry window, block the damage.
+        if (playerParry != null && playerParry.IsParrying)
+        {
+            playerParry.OnSuccessfulParry();
+            // We can try to stun the attacker here in the future.
+            // For now, just block the damage.
+            return; 
+        }
+
         if (isInvincible) return; // Ignore damage while invincible
 
         currentHealth -= amount;

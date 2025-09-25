@@ -62,6 +62,15 @@ public class SkillRegenSystem : MonoBehaviour
     }
 
     /// <summary>
+    /// Fills the skill bar to its maximum value.
+    /// </summary>
+    public void FillToMax()
+    {
+        // Pass a large number to ensure it fills completely, AddFill in UI will clamp it.
+        skillRegenUI?.AddFill(maxFillAmount);
+    }
+
+    /// <summary>
     /// Consumes the entire skill bar.
     /// </summary>
     public void Use()

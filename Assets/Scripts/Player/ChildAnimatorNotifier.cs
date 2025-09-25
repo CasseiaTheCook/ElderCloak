@@ -1,19 +1,22 @@
 using UnityEngine;
 
+// This class acts as a bridge for Animation Events from a child Animator
+// to call methods on scripts on the parent GameObject.
 public class ChildAnimatorNotifier : MonoBehaviour
 {
-    public void NotifyParent()
-    {
-        // Find the PlayerController script on the parent object
-        PlayerAttack attackScript = GetComponentInParent<PlayerAttack>();
+    private PlayerAttack attackScript;
 
+    private void Awake()
+    {
+        attackScript = GetComponentInParent<PlayerAttack>();
+    }
+
+    // Called by Animation Event at the end of the attack animation.
+    public void NotifyEndAttack()
+    {
         if (attackScript != null)
         {
             attackScript.EndAttack();
-        }
-        else
-        {
-            Debug.LogWarning("Parent object does not have a PlayerController script.");
         }
     }
 }
