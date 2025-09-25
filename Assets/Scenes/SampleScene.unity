@@ -1222,16 +1222,15 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &709819893
-Transform:
+--- !u!224 &709819893
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 709819892}
-  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -468.29706, y: 214.3, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1239,6 +1238,11 @@ Transform:
   - {fileID: 1870079968}
   m_Father: {fileID: 461909647}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 157, y: 163.2}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &876922408
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,6 +1403,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35b81436e37d3924b8ef01af178f155f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  animationSpeed: 0.5
+  delayedHealthBarImage: {fileID: 0}
+  delayBeforeDrain: 0.75
+  drainSpeed: 0.25
 --- !u!114 &887608239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2240,6 +2248,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 337842000}
+  - {fileID: 1930940141}
   - {fileID: 1776037262}
   m_Father: {fileID: 461909647}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2407,7 +2416,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 125, y: -12.5}
-  m_SizeDelta: {x: 250, y: 24}
+  m_SizeDelta: {x: 248, y: 23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1776037263
 MonoBehaviour:
@@ -2459,6 +2468,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35b81436e37d3924b8ef01af178f155f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  animationSpeed: 0.5
+  delayedHealthBarImage: {fileID: 1930940143}
+  delayBeforeDrain: 0.75
+  drainSpeed: 0.25
 --- !u!1 &1785967116
 GameObject:
   m_ObjectHideFlags: 0
@@ -2711,7 +2724,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 18.134, y: -18.5}
-  m_SizeDelta: {x: 309.0851, y: 25}
+  m_SizeDelta: {x: 310, y: 27}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1870079969
 MonoBehaviour:
@@ -2763,6 +2776,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd7a7e635df57624c8855cd44fd779fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthRegenUI
+--- !u!1 &1930940140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1930940141}
+  - component: {fileID: 1930940144}
+  - component: {fileID: 1930940143}
+  m_Layer: 5
+  m_Name: DelayedHealthBar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1930940141
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930940140}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1356001242}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 125, y: -12.5}
+  m_SizeDelta: {x: 250, y: 24}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1930940143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930940140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.4627451}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -3768386439881150015, guid: eceeb6bcca04d2b45b320602c6bf3b81, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1930940144
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930940140}
+  m_CullTransparentMesh: 1
 --- !u!1 &2012092433
 GameObject:
   m_ObjectHideFlags: 0
