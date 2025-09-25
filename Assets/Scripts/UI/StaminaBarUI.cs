@@ -32,7 +32,6 @@ public class StaminaBarUI : MonoBehaviour
         if (playerStamina != null)
         {
             playerStamina.OnStaminaChanged += UpdateStaminaBar;
-            playerStamina.OnLowStaminaStateChanged += HandleLowStaminaFlash;
             // Başlangıç değerini ayarla
             float initialFill = playerStamina.CurrentStamina / 100f; // Assume 100 max at start
             staminaBarImage.fillAmount = initialFill;
@@ -52,7 +51,6 @@ public class StaminaBarUI : MonoBehaviour
         if (playerStamina != null)
         {
             playerStamina.OnStaminaChanged -= UpdateStaminaBar;
-            playerStamina.OnLowStaminaStateChanged -= HandleLowStaminaFlash;
         }
     }
 

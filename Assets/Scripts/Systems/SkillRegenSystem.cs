@@ -12,6 +12,9 @@ public class SkillRegenSystem : MonoBehaviour
     [SerializeField] private float maxFillAmount = 100f;
     [SerializeField] private float fillPerHit = 25f;
     [SerializeField] private float fillDecayRate = 5f; // Barın saniyede azalma miktarı
+    [SerializeField] private float decayDelay = 1f; // Delay before decay starts after filling
+
+    private float decayDelayTimer = 0f;
 
     private void Start()
     {
@@ -28,8 +31,15 @@ public class SkillRegenSystem : MonoBehaviour
 
     private void Update()
     {
+        // Update the decay delay timer
+        if (decayDelayTimer > 0f)
+        {
+            decayDelayTimer -= Time.deltaTime;
+        }
+
         // Bar referansı varsa, tam dolu değilse ve 0'dan büyükse barı zamanla azalt
-        if (skillRegenUI != null && !skillRegenUI.IsFull && skillRegenUI.CurrentFillAmount > 0)
+        // Only decay if the delay timer has expired
+        if (skillRegenUI != null && !skillRegenUI.IsFull && skillRegenUI.CurrentFillAmount > 0 && decayDelayTimer <= 0f)
         {
             skillRegenUI.AddFill(-fillDecayRate * Time.deltaTime);
         }
@@ -50,6 +60,7 @@ public class SkillRegenSystem : MonoBehaviour
         if (skillRegenUI != null)
         {
             skillRegenUI.AddFill(fillPerHit);
+            decayDelayTimer = decayDelay; // Reset the decay delay timer
         }
     }
 
@@ -67,7 +78,11 @@ public class SkillRegenSystem : MonoBehaviour
     public void FillToMax()
     {
         // Pass a large number to ensure it fills completely, AddFill in UI will clamp it.
-        skillRegenUI?.AddFill(maxFillAmount);
+        if (skillRegenUI != null)
+        {
+            skillRegenUI.AddFill(maxFillAmount);
+            decayDelayTimer = decayDelay; // Reset the decay delay timer
+        }
     }
 
     /// <summary>

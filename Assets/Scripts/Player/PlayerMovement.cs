@@ -3,7 +3,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-   
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
     [HideInInspector] public float currentMoveSpeed;
@@ -11,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Jump Settings")]
     public float jumpForce = 12f;
     public int maxJumps = 2;
-    private bool canJump=true;
+    private bool canJump = true;
 
     [Header("Dash Settings")]
     public float dashDistance = 5f;
@@ -43,7 +42,6 @@ public class PlayerMovement : MonoBehaviour
         playerAttack = GetComponent<PlayerAttack>();   // Get reference to PlayerAttack script
         playerHealth = GetComponent<PlayerHealth>();   // Get reference to PlayerHealth script
         playerStamina = GetComponent<PlayerStamina>(); // Get reference to PlayerStamina script
-        playerStamina.OnLowStaminaStateChanged += SetExhaustedState;
     }
 
     private void Start()
@@ -59,10 +57,7 @@ public class PlayerMovement : MonoBehaviour
         UpdateAnimations(); // Update walking and jumping animations
     }
 
-    private void OnDestroy()
-    {
-        playerStamina.OnLowStaminaStateChanged -= SetExhaustedState;
-    }
+
 
     private void FixedUpdate()
     {
@@ -93,7 +88,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.performed && !isDashing && canDash && !isDashOnCooldown && playerStamina.HasEnoughStamina(dashStaminaCost))
+        // Allow dash if at least 1 stamina is available
+        if (context.performed && !isDashing && canDash && !isDashOnCooldown && playerStamina.HasEnoughStamina(1f))
         {
             Dash();
         }
@@ -125,7 +121,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
-  
         rb.linearVelocity = new Vector2(moveInput.x * currentMoveSpeed, rb.linearVelocity.y);
     }
 
@@ -135,15 +130,14 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log(currentMoveSpeed);
         canDash = false;
         canJump = false;
-           
     }
 
     public void ResetMovement()
     {
-            currentMoveSpeed = moveSpeed;
-            canDash = true;
-            canJump = true;
-            jumpForce = 12f;
+        currentMoveSpeed = moveSpeed;
+        canDash = true;
+        canJump = true;
+        jumpForce = 12f;
     }
 
     private void Jump()
@@ -154,8 +148,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Dash()
     {
-        // Consume stamina for dashing
-        playerStamina.ConsumeStamina(dashStaminaCost);
+        // Consume as much stamina as possible, up to dashStaminaCost
+        float staminaToConsume = Mathf.Min(dashStaminaCost, playerStamina.CurrentStamina);
+        playerStamina.ConsumeStamina(staminaToConsume);
 
         // Make the player invincible at the start of the dash if enabled
         if (canShadowDash)

@@ -30,8 +30,6 @@ public class PlayerParry : MonoBehaviour
         if (playerSpriteRenderer == null) playerSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
         if (playerStamina == null) playerStamina = GetComponent<PlayerStamina>();
 
-        playerStamina.OnLowStaminaStateChanged += SetExhaustedState;
-
         if (playerSpriteRenderer != null)
         {
             originalColor = playerSpriteRenderer.color;
@@ -41,7 +39,7 @@ public class PlayerParry : MonoBehaviour
     public void OnParry(InputAction.CallbackContext context)
     {
         // Parry yapabilmek için yeterli stamina var mı, bekleme süresinde değil mi ve bitkin değil mi?
-        if (context.performed && canParry && playerStamina.HasEnoughStamina(parryStaminaCost))
+        if (context.performed && canParry && playerStamina.HasEnoughStamina(1))
         {
             // Staminayı tüket
             playerStamina.ConsumeStamina(parryStaminaCost);
@@ -88,10 +86,6 @@ public class PlayerParry : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        playerStamina.OnLowStaminaStateChanged -= SetExhaustedState;
-    }
 
     private void SetExhaustedState(bool isExhausted)
     {

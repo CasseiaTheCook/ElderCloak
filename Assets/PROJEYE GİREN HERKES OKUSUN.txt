@@ -1,4 +1,5 @@
-Sharp studios olarak büyük oyun yapacaz genel düşünün asla basit geçici çözüm yapmayın amınıza koyarım sistem bitmeden yarım kalmış sorunları olan bug test yapılmamış
+Sharp studios olarak büyük oyun yapacaz genel düşünün asla basit geçici çözüm yapm
+ayın amınıza koyarım sistem bitmeden yarım kalmış sorunları olan bug test yapılmamış
 şeyleride pushlamayın tekrardan amınıza koyarım.
 
 Daha organize olmamız gerekiyo diye bol bol klasör lazım o yüzden daha çok açabilirsiniz yaptığınız şey hiç bir kategoriye uymuyosa. 
@@ -8,3 +9,5 @@ Daha organize olmamız gerekiyo diye bol bol klasör lazım o yüzden daha çok 
 
 
 Sprites klasöründe kod kod klasöründe sprite görürsem sikerim belanızı -Deniz Acar
+
+selam -metehan cekci

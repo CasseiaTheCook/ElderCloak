@@ -591,8 +591,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0068740845, y: -0.019601226}
-  m_Size: {x: 1.1037197, y: 2.3695948}
+  m_Offset: {x: -0.039831877, y: -0.019601226}
+  m_Size: {x: 0.74435854, y: 2.3695948}
   m_Direction: 0
 --- !u!114 &252173739
 MonoBehaviour:
@@ -1316,9 +1316,9 @@ RectTransform:
   - {fileID: 1870079968}
   m_Father: {fileID: 461909647}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 156.7, y: 155.4}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 156.1, y: -92.3}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &797929079
@@ -1354,7 +1354,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 125.8, y: -40.1}
+  m_AnchoredPosition: {x: 125, y: -37.7}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &876922408
@@ -2080,7 +2080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48032469358ea6a409e8dc1cb4286404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackHitbox
-  damageAmount: 3
+  damageAmount: 5
 --- !u!58 &1287557874
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2998,7 +2998,7 @@ RectTransform:
   m_GameObject: {fileID: 1870079967}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 709819893}
@@ -3370,8 +3370,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c65636e1ce3a9254ab1a45f39346caf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
-  attackHitbox: {fileID: 876922408}
-  SkillRegenSystem: {fileID: 2041628722}
 --- !u!50 &2041628718
 Rigidbody2D:
   serializedVersion: 5
@@ -3575,7 +3573,7 @@ MonoBehaviour:
   maxJumps: 2
   dashDistance: 2.2
   dashDuration: 0.15
-  dashCooldown: 1
+  dashCooldown: 0.2
   dashStaminaCost: 25
   canShadowDash: 0
   canDash: 1
@@ -3594,8 +3592,9 @@ MonoBehaviour:
   skillRegenUI: {fileID: 1870079971}
   playerMovement: {fileID: 2041628720}
   maxFillAmount: 100
-  fillPerHit: 20
-  fillDecayRate: 2
+  fillPerHit: 10
+  fillDecayRate: 5
+  decayDelay: 0.4
 --- !u!114 &2041628723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3625,8 +3624,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerParry
   parryStaminaCost: 30
-  parryDuration: 0.4
-  parryCooldown: 0.5
+  parryDuration: 0.3
+  parryCooldown: 0.3
   parrySuccessColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   playerHealth: {fileID: 2041628714}
   skillRegenSystem: {fileID: 2041628722}
@@ -3645,7 +3644,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   maxStamina: 100
-  lowStaminaThreshold: 30
   staminaRegenRate: 30
   staminaRegenDelay: 1.5
   skillRegenSystem: {fileID: 2041628722}

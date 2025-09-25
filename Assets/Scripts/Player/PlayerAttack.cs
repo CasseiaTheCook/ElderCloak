@@ -5,8 +5,8 @@ public class PlayerAttack : MonoBehaviour
 {
     [Header("References")]
     private PlayerMovement playerMovement;
-    [SerializeField] private GameObject attackHitbox;
-    [SerializeField] private SkillRegenSystem SkillRegenSystem;
+    private GameObject attackHitbox;
+    private SkillRegenSystem SkillRegenSystem;
     private Animator animator; 
     private bool isAttacking = false;
 
