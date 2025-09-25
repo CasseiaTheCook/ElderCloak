@@ -1,0 +1,41 @@
+-------------------------------------------
+Kontroller
+-------------------------------------------
+
+A D | Yürüme
+Space | Zıplama (Basılı tutarak daha yükseğe zıpla)
+Çift Space | Çift Zıplama
+Sol Shift | Dash / Atılma
+Sol Mouse | Normal Saldırı (Saldırı sırasında yön değiştirilemez)
+Sağ Mouse | Parry
+Q | Ağır Saldırı (Skill barı doluyken kullanılır)
+E | Envanter (Açıkken hareket yavaşlar)
+F | Can Doldurma
+
+-------------------------------------------
+Can Sistemi
+-------------------------------------------
+F tuşu ile %30 can doldurabilirsin (3 kullanım hakkı).
+Hasar aldıktan sonra kısa bir süreliğine dokunulmaz olursun.
+
+-------------------------------------------
+Stamina Sistemi
+-------------------------------------------
+Dash ve Parry gibi yetenekler için staminanı kontrol et.
+Staminan %30'un altına düştüğünde bitkin düşersin; bu durumda Dash ve Parry kullanamazsın.
+Skill barın tam dolu iken yaptığın eylemler stamina tüketmez.
+
+-------------------------------------------
+Skill Sistemi
+-------------------------------------------
+Başarılı vuruş başına 20/100 skill puanı kazanırsın.
+Skill barı, kullanılmadığında saniye başına 2.5 puan azalır.
+Ağır Saldırı (Q): Skill barın doluyken güçlü bir saldırı yaparsın. Bu saldırı sırasında hareketlerin yavaşlar.
+Gölge Dash: Skill barın doluyken yaptığın Dash, düşmanların içinden geçmeni ve hasar almamanı sağlar.
+
+-------------------------------------------
+Parry Sistemi
+-------------------------------------------
+Doğru zamanda yapılan Parry, gelen hasarı ve stamina azalışını engeller.
+Başarılı bir Parry, Skill Barını tamamen doldurur.
+Bitkin durumdayken (stamina %30'un altındayken) Parry yapamazsın.
