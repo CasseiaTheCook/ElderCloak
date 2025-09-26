@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyAI : MonoBehaviour
+public class PatrolScript : MonoBehaviour
 {
     public Transform pointA; // First point for patrol
     public Transform pointB; // Second point for patrol
