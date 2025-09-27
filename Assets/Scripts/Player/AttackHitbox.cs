@@ -11,6 +11,8 @@ public class AttackHitbox : MonoBehaviour
     [Header("Hit Feedback")]
     [SerializeField] private float hitstopDuration = 0.5f; // Duration of hitstop in seconds
 
+    private static bool isHitstopActive = false; // To prevent multiple hitstops
+
     private void Awake()
     {
         // Find the PlayerAttack script on the parent object
@@ -34,7 +36,10 @@ public class AttackHitbox : MonoBehaviour
                 // 3. Shake the camera on hit
                 CameraShaker.Instance?.HitShake();
                 // 4. Hitstop for better hit feeling
-                StartCoroutine(HitstopCoroutine());
+                if (!isHitstopActive)
+                {
+                    StartCoroutine(HitstopCoroutine());
+                }
             }
         }
     }
@@ -42,9 +47,11 @@ public class AttackHitbox : MonoBehaviour
     private IEnumerator HitstopCoroutine()
     {
         float originalTimeScale = Time.timeScale;
+        isHitstopActive = true;
         Time.timeScale = 0f;
         // Wait for real time, not affected by timescale
         yield return new WaitForSecondsRealtime(hitstopDuration);
         Time.timeScale = originalTimeScale;
+        isHitstopActive = false;
     }
 }

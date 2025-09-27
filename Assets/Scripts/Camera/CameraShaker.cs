@@ -46,7 +46,7 @@ public class CameraShaker : MonoBehaviour
         {
             Vector3 randomPoint = originalPosition + (Vector3)Random.insideUnitCircle * magnitude;
             transform.localPosition = randomPoint;
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime; // Use unscaledDeltaTime to ignore Time.timeScale
             yield return null;
         }
         transform.localPosition = originalPosition;
