@@ -9,6 +9,7 @@ TagManager:
   - HitBox
   - UI
   - Inventory
+  - PlayerSprite
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - UI
   - Ground
   - Enemy
-  - 
+  - PlayerSprite
   - 
   - 
   - 
