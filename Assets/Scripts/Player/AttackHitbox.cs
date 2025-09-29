@@ -41,10 +41,21 @@ public class AttackHitbox : MonoBehaviour
 
     private IEnumerator HitstopCoroutine()
     {
+        // Only apply hitstop if the game is not paused
+        if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsPaused)
+        {
+            yield break;
+        }
+
         float originalTimeScale = Time.timeScale;
         Time.timeScale = 0f;
         // Wait for real time, not affected by timescale
         yield return new WaitForSecondsRealtime(hitstopDuration);
-        Time.timeScale = originalTimeScale;
+        
+        // Only restore timescale if the game is not paused
+        if (PauseMenuManager.Instance == null || !PauseMenuManager.Instance.IsPaused)
+        {
+            Time.timeScale = originalTimeScale;
+        }
     }
 }
