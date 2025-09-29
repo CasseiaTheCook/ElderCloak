@@ -26,6 +26,9 @@ public class PauseMenuManager : MonoBehaviour
     // Enemy AI references for pausing
     private List<PatrolScript> patrolScripts = new List<PatrolScript>();
     private List<FlyingEnemyAI> flyingEnemyAIs = new List<FlyingEnemyAI>();
+    
+    // General pausable components
+    private List<IPausable> pausableComponents = new List<IPausable>();
 
     // UI Canvas reference
     private Canvas pauseCanvas;
@@ -68,8 +71,21 @@ public class PauseMenuManager : MonoBehaviour
     private void Update()
     {
         // Handle pause input (ESC key)
+        // Only allow pause toggle when no UI element has focus or when the game is paused
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
+            // Check if any input field is focused (prevent pausing during text input)
+            if (UnityEngine.EventSystems.EventSystem.current != null && 
+                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
+            {
+                var inputField = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<UnityEngine.UI.InputField>();
+                if (inputField != null)
+                {
+                    // Don't pause if an input field is active
+                    return;
+                }
+            }
+            
             TogglePause();
         }
     }
@@ -86,6 +102,15 @@ public class PauseMenuManager : MonoBehaviour
         
         canvasObj.AddComponent<CanvasScaler>();
         canvasObj.AddComponent<GraphicRaycaster>();
+
+        // Ensure we have an EventSystem for UI interaction
+        if (UnityEngine.EventSystems.EventSystem.current == null)
+        {
+            GameObject eventSystemObj = new GameObject("EventSystem");
+            eventSystemObj.transform.SetParent(transform);
+            eventSystemObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventSystemObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+        }
 
         // Create main panel
         GameObject panelObj = new GameObject("PauseMenuPanel");
@@ -172,6 +197,11 @@ public class PauseMenuManager : MonoBehaviour
         
         button.onClick.AddListener(() => onClick());
         
+        // Setup navigation for gamepad/keyboard support
+        Navigation nav = button.navigation;
+        nav.mode = Navigation.Mode.Automatic;
+        button.navigation = nav;
+        
         return button;
     }
 
@@ -217,6 +247,12 @@ public class PauseMenuManager : MonoBehaviour
         if (pauseMenuPanel != null)
         {
             pauseMenuPanel.SetActive(true);
+            
+            // Select the first button for gamepad/keyboard navigation
+            if (resumeButton != null && UnityEngine.EventSystems.EventSystem.current != null)
+            {
+                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+            }
         }
 
         // Pause all enemy AIs
@@ -265,6 +301,13 @@ public class PauseMenuManager : MonoBehaviour
             if (flyingAI != null)
                 flyingAI.PauseAI();
         }
+        
+        // Pause all registered pausable components
+        foreach (var pausable in pausableComponents)
+        {
+            if (pausable != null)
+                pausable.OnPause();
+        }
     }
 
     private void ResumeEnemyAI()
@@ -280,6 +323,13 @@ public class PauseMenuManager : MonoBehaviour
             if (flyingAI != null)
                 flyingAI.ResumeAI();
         }
+        
+        // Resume all registered pausable components
+        foreach (var pausable in pausableComponents)
+        {
+            if (pausable != null)
+                pausable.OnResume();
+        }
     }
 
     private void RefreshEnemyReferences()
@@ -287,15 +337,25 @@ public class PauseMenuManager : MonoBehaviour
         // Clear existing references
         patrolScripts.Clear();
         flyingEnemyAIs.Clear();
+        pausableComponents.Clear();
 
         // Find all enemy AIs in the current scene
         PatrolScript[] foundPatrolScripts = FindObjectsOfType<PatrolScript>();
         FlyingEnemyAI[] foundFlyingAIs = FindObjectsOfType<FlyingEnemyAI>();
+        
+        // Find all pausable components
+        PausableComponent[] foundPausableComponents = FindObjectsOfType<PausableComponent>();
 
         patrolScripts.AddRange(foundPatrolScripts);
         flyingEnemyAIs.AddRange(foundFlyingAIs);
+        
+        // Add pausable components to the list
+        foreach (var pausableComponent in foundPausableComponents)
+        {
+            pausableComponents.Add(pausableComponent);
+        }
 
-        Debug.Log($"Found {patrolScripts.Count} PatrolScripts and {flyingEnemyAIs.Count} FlyingEnemyAIs");
+        Debug.Log($"Found {patrolScripts.Count} PatrolScripts, {flyingEnemyAIs.Count} FlyingEnemyAIs, and {pausableComponents.Count} PausableComponents");
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -355,6 +415,25 @@ public class PauseMenuManager : MonoBehaviour
 
     // Public properties for external access
     public bool IsPaused => isPaused;
+
+    // Public methods for registering pausable components
+    public void RegisterPausable(IPausable pausable)
+    {
+        if (pausable != null && !pausableComponents.Contains(pausable))
+        {
+            pausableComponents.Add(pausable);
+            Debug.Log($"Registered pausable component: {pausable}");
+        }
+    }
+
+    public void UnregisterPausable(IPausable pausable)
+    {
+        if (pausable != null && pausableComponents.Contains(pausable))
+        {
+            pausableComponents.Remove(pausable);
+            Debug.Log($"Unregistered pausable component: {pausable}");
+        }
+    }
 
     // Cleanup on destroy
     private void OnDestroy()
