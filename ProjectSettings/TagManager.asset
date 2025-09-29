@@ -10,6 +10,7 @@ TagManager:
   - UI
   - Inventory
   - PlayerSprite
+  - PauseMenu
   layers:
   - Default
   - TransparentFX

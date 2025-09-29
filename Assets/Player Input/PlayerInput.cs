@@ -163,6 +163,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""26fb9858-b032-4d57-b6c5-efb07fc50560"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""8efc6543-4cfe-40b6-8ad5-26e6eb373748"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -363,6 +381,50 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Parry"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""21ec3703-9de8-4726-83a9-a982ba95c919"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""93c17b1d-da58-403d-aeb0-01c20e78a844"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""793d9111-bdc1-4435-933a-44b475df6674"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""047f24e4-e611-4de1-8402-3f09bb7bc29c"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -396,6 +458,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_PlayerControls_Heal = m_PlayerControls.FindAction("Heal", throwIfNotFound: true);
         m_PlayerControls_HeavyAttack = m_PlayerControls.FindAction("HeavyAttack", throwIfNotFound: true);
         m_PlayerControls_Parry = m_PlayerControls.FindAction("Parry", throwIfNotFound: true);
+        m_PlayerControls_Interact = m_PlayerControls.FindAction("Interact", throwIfNotFound: true);
+        m_PlayerControls_Pause = m_PlayerControls.FindAction("Pause", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -484,6 +548,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerControls_Heal;
     private readonly InputAction m_PlayerControls_HeavyAttack;
     private readonly InputAction m_PlayerControls_Parry;
+    private readonly InputAction m_PlayerControls_Interact;
+    private readonly InputAction m_PlayerControls_Pause;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerControls".
     /// </summary>
@@ -527,6 +593,14 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerControls/Parry".
         /// </summary>
         public InputAction @Parry => m_Wrapper.m_PlayerControls_Parry;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerControls/Interact".
+        /// </summary>
+        public InputAction @Interact => m_Wrapper.m_PlayerControls_Interact;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerControls/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_PlayerControls_Pause;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -577,6 +651,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Parry.started += instance.OnParry;
             @Parry.performed += instance.OnParry;
             @Parry.canceled += instance.OnParry;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         /// <summary>
@@ -612,6 +692,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Parry.started -= instance.OnParry;
             @Parry.performed -= instance.OnParry;
             @Parry.canceled -= instance.OnParry;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         /// <summary>
@@ -721,5 +807,19 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnParry(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Interact" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInteract(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
     }
 }
