@@ -19,7 +19,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashStaminaCost = 25f;
     [Tooltip("If true, the player becomes invincible during the dash. This is controlled by SkillRegenSystem.")]
     [SerializeField] public bool canShadowDash = false;
-    public bool canDash = true;
+    private bool canDash = true; // Only for cooldown/exhausted state
+
+    // NEW: Ability unlock variables
+    public bool hasDashAbility = false;
+    public bool hasDoubleJumpAbility = false;
+    public bool hasRunAbility = true;
 
     private int jumpsLeft;
     private bool isDashing;
@@ -30,18 +35,32 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
 
     private Rigidbody2D rb;
-    private Animator animator; // Reference to the Animator
-    private PlayerAttack playerAttack; // Reference to PlayerAttack script
-    private PlayerHealth playerHealth; // Reference to PlayerHealth script
-    private PlayerStamina playerStamina; // Reference to PlayerStamina script
+    private Animator animator;
+    private PlayerAttack playerAttack;
+    private PlayerHealth playerHealth;
+    private PlayerStamina playerStamina;
+
+    private SaveDataManager saveManager;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponentInChildren<Animator>(); // Get Animator from child
-        playerAttack = GetComponent<PlayerAttack>();   // Get reference to PlayerAttack script
-        playerHealth = GetComponent<PlayerHealth>();   // Get reference to PlayerHealth script
-        playerStamina = GetComponent<PlayerStamina>(); // Get reference to PlayerStamina script
+        animator = GetComponentInChildren<Animator>();
+        playerAttack = GetComponent<PlayerAttack>();
+        playerHealth = GetComponent<PlayerHealth>();
+        playerStamina = GetComponent<PlayerStamina>();
+        saveManager = FindFirstObjectByType<SaveDataManager>();
+        if (saveManager != null && saveManager.currentSave != null)
+        {
+            // Dash yeteneði
+            hasDashAbility = saveManager.currentSave.canDash;
+            // Çift zýplama yeteneði
+            hasDoubleJumpAbility = saveManager.currentSave.canDoubleJump;
+            maxJumps = hasDoubleJumpAbility ? 2 : 1;
+            // Koþma yeteneði
+            hasRunAbility = saveManager.currentSave.canRun;
+            currentMoveSpeed = hasRunAbility ? moveSpeed : 0f;
+        }
     }
 
     private void Start()
@@ -54,10 +73,8 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleDash();
         Flip();
-        UpdateAnimations(); // Update walking and jumping animations
+        UpdateAnimations();
     }
-
-
 
     private void FixedUpdate()
     {
@@ -74,6 +91,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
+        // Only allow jumping if you have jump ability
         if (context.performed && jumpsLeft > 0 && canJump)
         {
             Jump();
@@ -81,15 +99,14 @@ public class PlayerMovement : MonoBehaviour
 
         if (context.canceled && rb.linearVelocity.y > 0)
         {
-            // Stop upward velocity instantly when jump button is released
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
         }
     }
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        // Allow dash if at least 1 stamina is available
-        if (context.performed && !isDashing && canDash && !isDashOnCooldown && playerStamina.HasEnoughStamina(1f))
+        // Only allow dash if player has unlocked dash ability
+        if (context.performed && hasDashAbility && !isDashing && canDash && !isDashOnCooldown && playerStamina.HasEnoughStamina(1f))
         {
             Dash();
         }
@@ -97,7 +114,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Flip()
     {
-        // If the player is attacking, don't allow flipping
         if (playerAttack != null && playerAttack.IsAttacking)
             return;
 
@@ -148,11 +164,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Dash()
     {
-        // Consume as much stamina as possible, up to dashStaminaCost
         float staminaToConsume = Mathf.Min(dashStaminaCost, playerStamina.CurrentStamina);
         playerStamina.ConsumeStamina(staminaToConsume);
 
-        // Make the player invincible at the start of the dash if enabled
         if (canShadowDash)
         {
             playerHealth?.SetInvincibility(true);
@@ -162,15 +176,12 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         dashTimeRemaining = dashDuration;
 
-        // Set dash direction based on move input, or facing direction if there's no input.
         float horizontalDirection = moveInput.x;
         if (Mathf.Approximately(horizontalDirection, 0f))
         {
             horizontalDirection = isFacingRight ? 1f : -1f;
         }
         dashDirection = new Vector2(horizontalDirection, 0).normalized;
-
-        // Lock the Rigidbody's y-axis to prevent any vertical movement
         rb.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
     }
 
@@ -178,14 +189,9 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isDashing)
         {
-            // Calculate dash distance per frame
             float dashSpeed = dashDistance / dashDuration;
             Vector3 dashMovement = dashDirection * dashSpeed * Time.deltaTime;
-
-            // Move the player directly using the Transform component
             transform.position += dashMovement;
-
-            // Decrease the remaining dash time
             dashTimeRemaining -= Time.deltaTime;
 
             if (dashTimeRemaining <= 0)
@@ -197,17 +203,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndDash()
     {
-        // Make the player vulnerable again at the end of the dash if enabled
         if (canShadowDash)
         {
             playerHealth?.SetInvincibility(false);
         }
 
         isDashing = false;
-
-        // Unlock the Rigidbody's y-axis to restore normal vertical movement
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-
         StartCoroutine(DashCooldownRoutine());
     }
 
@@ -229,23 +231,18 @@ public class PlayerMovement : MonoBehaviour
     {
         if (animator == null)
             return;
-
-        // Set isWalking based on horizontal movement
         animator.SetBool("isWalking", Mathf.Abs(moveInput.x) > 0);
-
-        // Set isJumping based on vertical velocity
         animator.SetBool("isJumping", !IsGrounded());
     }
 
     private bool IsGrounded()
     {
-        // Check if the player is grounded based on velocity
         return Mathf.Abs(rb.linearVelocity.y) < 0.01f;
     }
 
     private void SetExhaustedState(bool isExhausted)
     {
-        // When exhausted, player cannot dash.
+        // Only disables dash on exhaustion/cooldown, NOT ability unlock!
         canDash = !isExhausted;
     }
 }
