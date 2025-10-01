@@ -49,16 +49,15 @@ public class PlayerMovement : MonoBehaviour
         playerAttack = GetComponent<PlayerAttack>();
         playerHealth = GetComponent<PlayerHealth>();
         playerStamina = GetComponent<PlayerStamina>();
-        saveManager = FindFirstObjectByType<SaveDataManager>();
-        if (saveManager != null && saveManager.currentSave != null)
+        if (SaveDataManager.Instance && SaveDataManager.Instance.currentSave != null)
         {
             // Dash yeteneði
-            hasDashAbility = saveManager.currentSave.canDash;
+            hasDashAbility = SaveDataManager.Instance.currentSave.canDash;
             // Çift zýplama yeteneði
-            hasDoubleJumpAbility = saveManager.currentSave.canDoubleJump;
+            hasDoubleJumpAbility = SaveDataManager.Instance.currentSave.canDoubleJump;
             maxJumps = hasDoubleJumpAbility ? 2 : 1;
             // Koþma yeteneði
-            hasRunAbility = saveManager.currentSave.canRun;
+            hasRunAbility = SaveDataManager.Instance.currentSave.canRun;
             currentMoveSpeed = hasRunAbility ? moveSpeed : 0f;
         }
     }

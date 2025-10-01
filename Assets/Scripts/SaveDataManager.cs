@@ -2,23 +2,35 @@ using System.IO;
 using UnityEngine;
 
 [System.Serializable]
-[HideInInspector]public class SaveData
+public class SaveData
 {
     public bool canDash = false;
     public bool canDoubleJump = false;
     public bool canRun = true;
-    // Gerekirse ileride yeni özellikler ekleyebilirsin.
+    // Add more fields as needed.
 }
 
 public class SaveDataManager : MonoBehaviour
 {
+    public static SaveDataManager Instance { get; private set; }
+
     [HideInInspector] public SaveData currentSave;
     private string saveFilePath;
 
-    void Awake()
+    private void Awake()
     {
-        saveFilePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
-        LoadSave();
+        // Singleton pattern implementation
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Persist across scenes
+            saveFilePath = Path.Combine(Application.persistentDataPath, "SaveData.json");
+            LoadSave();
+        }
+        else
+        {
+            Destroy(gameObject); // Prevent duplicates
+        }
     }
 
     public void LoadSave()
@@ -31,13 +43,13 @@ public class SaveDataManager : MonoBehaviour
         else
         {
             currentSave = new SaveData();
-            SaveGame(); // Varsayýlan dosyayý yaz
+            SaveGame();
         }
     }
 
     public void SaveGame()
     {
-        string json = JsonUtility.ToJson(currentSave, true); // Pretty print için true
+        string json = JsonUtility.ToJson(currentSave, true);
         File.WriteAllText(saveFilePath, json);
     }
 }
