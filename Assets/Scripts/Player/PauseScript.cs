@@ -9,8 +9,8 @@ public class PauseScript : MonoBehaviour
     public static bool IsPaused = false;
 
     [Header("Unity Events")]
-    public UnityEvent onPause;
-    public UnityEvent onResume;
+    [HideInInspector] public UnityEvent onPause;
+    [HideInInspector] public UnityEvent onResume;
 
     private GameObject pauseMenuUI;
 
@@ -45,7 +45,7 @@ public class PauseScript : MonoBehaviour
         }
     }
 
-    private void TogglePause()
+    public void TogglePause()
     {
         if (IsPaused)
         {

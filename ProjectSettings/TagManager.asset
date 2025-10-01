@@ -11,6 +11,7 @@ TagManager:
   - Inventory
   - PlayerSprite
   - PauseMenu
+  - PlayerInteract
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - Ground
   - Enemy
   - PlayerSprite
-  - 
+  - Interactable
   - 
   - 
   - 

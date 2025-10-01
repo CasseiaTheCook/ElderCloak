@@ -4,11 +4,12 @@ using System.Collections;
 using TMPro;
 using UnityEngine.InputSystem;
 
-public class DialogueScript : MonoBehaviour
+public class DialogueScript : MonoBehaviour, IInteractable
 {
     [Header("UI References")]
     public GameObject dialoguePanel;
     public TMP_Text dialogueText;
+    public TMP_Text notifier;
 
     [Header("Dialogue Pages")]
     [TextArea(2, 5)]
@@ -22,21 +23,6 @@ public class DialogueScript : MonoBehaviour
 
     private InputAction nextDialogueAction;
 
-    private void Awake()
-    {
-        nextDialogueAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/space");
-        nextDialogueAction.performed += ctx => OnNextDialogue();
-    }
-
-    private void OnEnable()
-    {
-        nextDialogueAction.Enable();
-    }
-
-    private void OnDisable()
-    {
-        nextDialogueAction.Disable();
-    }
 
     private void Start()
     {
@@ -45,17 +31,17 @@ public class DialogueScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("PlayerSprite") && !isDialogueActive)
+        if (other.CompareTag("PlayerSprite"))
         {
-            StartDialogue();
+            notifier.gameObject.SetActive(true);
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("PlayerSprite") && isDialogueActive)
+        if (other.CompareTag("PlayerSprite"))
         {
-            EndDialogue();
+            notifier.gameObject.SetActive(false);
         }
     }
 
@@ -84,7 +70,13 @@ public class DialogueScript : MonoBehaviour
             yield return new WaitForSeconds(letterDelay);
         }
     }
-
+    public void Interact()
+    {
+        if(!isDialogueActive)
+            StartDialogue();
+        else
+            OnNextDialogue();
+    }
     private void OnNextDialogue()
     {
         if (!isDialogueActive) return;

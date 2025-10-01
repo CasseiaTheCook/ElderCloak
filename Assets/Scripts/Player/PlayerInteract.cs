@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.InputSystem;
 public class PlayerInteract : MonoBehaviour
 {
     [Header("Interact Settings")]
@@ -23,9 +24,10 @@ public class PlayerInteract : MonoBehaviour
 
     }
 
-    private void TryInteract()
+    public void TryInteract(InputAction.CallbackContext context)
     {
-        // Oyuncunun pozisyonu ve yönü
+        if(context.performed)
+        { // Oyuncunun pozisyonu ve yönü
         Vector2 origin = transform.position;
         Vector2 direction = transform.right; // Sað yön, gerekirse deðiþtir
 
@@ -38,6 +40,8 @@ public class PlayerInteract : MonoBehaviour
                 interactable.Interact();
             }
         }
+        }
+
     }
 
     // Debug için ray gösterimi
